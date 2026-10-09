@@ -10,9 +10,9 @@ Yêu cầu Docker Desktop ở chế độ Linux containers, Docker Compose v2; N
 Set-Location C:\dat-ve-xem-phim
 # Chỉ lần đầu, nếu chưa có .env:
 powershell -ExecutionPolicy Bypass -File scripts/setup.ps1
-docker compose config --quiet
-docker compose up -d --build --wait
-docker compose ps
+powershell -ExecutionPolicy Bypass -File scripts/stack.ps1 config
+powershell -ExecutionPolicy Bypass -File scripts/stack.ps1 up
+powershell -ExecutionPolicy Bypass -File scripts/stack.ps1 ps
 ```
 
 Script tạo mật khẩu ngẫu nhiên, không ghi đè .env, tạo file credential exporter bị Git bỏ qua. Không commit .env. Mật khẩu trong .env chỉ dùng ký tự chữ/số vì script khởi tạo MySQL sử dụng SQL tạo tài khoản. Chỉ database rỗng mới chạy script init.
@@ -47,11 +47,20 @@ Hardening: app USER node (UID 1000); read-only filesystem với volume log và t
 
 Seed tạo ba phim, hai phòng với 40 ghế/phòng và lịch bảy ngày kế tiếp tính từ ngày khởi tạo volume. Khi lịch hết hạn, thêm lịch mới bằng SQL qua phpMyAdmin; không xóa volume để làm mới lịch nếu cần giữ đơn cũ.
 
+Nếu cần lịch demo mới nhưng vẫn giữ vé cũ, đăng nhập phpMyAdmin bằng root và chạy truy vấn có thể lặp lại sau (không đổi suất đã tồn tại):
+
+```sql
+INSERT IGNORE INTO showtimes(movie_id,room_id,starts_at,price)
+SELECT m.id,r.id,TIMESTAMP(DATE_ADD(CURDATE(),INTERVAL d.n DAY),MAKETIME(10+m.id*3+(r.id-1),0,0)),70000+(r.id-1)*20000
+FROM movies m CROSS JOIN rooms r
+CROSS JOIN (SELECT 1 n UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7) d;
+```
+
 ## Xử lý lỗi
 
 - `port is already allocated`: kiểm tra cổng, đổi .env rồi `docker compose up -d`; giữ nguyên container dự án khác.
 - 503/database unhealthy: `docker compose logs --tail 80 db app`; kiểm tra init, mật khẩu và volume đã có từ trước. Đổi .env không tự đổi password của tài khoản tồn tại.
-- 502 sau rebuild app: `docker compose restart nginx` để cập nhật DNS upstream.
+- 502 sau rebuild app: Nginx resolve DNS Docker mỗi 10 giây; kiểm tra app healthy, chờ cập nhật DNS hoặc `docker compose restart nginx`.
 - Ghế vừa được đặt: API trả 409, frontend tải lại sơ đồ và yêu cầu chọn lại.
 - PowerShell chặn script: lệnh `powershell -ExecutionPolicy Bypass -File scripts/setup.ps1` chỉ thay policy cho tiến trình đó.
 - Không có phim/suất chiếu: kiểm tra tìm kiếm và lịch trong database, UI có trạng thái rỗng riêng.
@@ -71,3 +80,39 @@ powershell -ExecutionPolicy Bypass -File scripts/stack.ps1 down
 cAdvisor cần privileged và đọc socket/mount Docker để lấy metadata: đây là ngoại lệ hardening có chủ đích, không publish cổng và không áp dụng cho app. Có thể nhìn thấy metadata container khác ở exporter, nhưng Prometheus lọc lưu chỉ project cinema11. Trên Docker Desktop, số liệu phản ánh container trong Linux VM, không phải toàn bộ Windows host. Docker Engine mới yêu cầu API mới; cAdvisor 0.55.1 được chọn để phù hợp. Nếu thiếu nhãn hoặc không có metrics từng container, kiểm tra logs cAdvisor, quyền đọc socket và mount. Không dùng số liệu root cgroup để giả làm container metrics.
 
 Tham khảo cấu hình exporter: https://github.com/prometheus/mysqld_exporter ; cAdvisor: https://github.com/google/cadvisor . Phiên bản pin trong các file Compose, không dùng latest; pin không có nghĩa là đã kiểm toán toàn bộ lỗ hổng.
+
+## Log tập trung: Loki / Promtail
+
+Loki và Promtail dùng cặp 3.5.12, file config được mount read-only. Promtail đọc volume log app/Nginx, không cần Docker socket; positions có volume riêng để tiếp tục sau restart. Nhãn cố định `project="cinema11"`, `service="app"` hoặc `service="nginx"`, `stream="access"/"error"` với Nginx. Log app là JSON: time, level, service, method, path, status, duration_ms; không ghi body, tên, email, password, token hoặc query string. Nginx access log JSON không ghi IP, cookie, authorization, query string hay request body. Loki lưu filesystem với retention 7 ngày; file nguồn trong volume cần chính sách xoay log khi vận hành dài hạn.
+
+**Promtail đã EOL ngày 02/03/2026**, không còn cập nhật hỗ trợ. Giữ Promtail để đáp ứng đề môn học; hệ thống production nên chuyển sang Grafana Alloy. Nguồn chính thức: https://grafana.com/docs/loki/latest/send-data/promtail/ . Loki auth tắt trong mạng monitoring riêng và không publish host; không dùng cấu hình này để công khai Loki.
+
+Trong Grafana Explore chọn Loki, time range Last 15 minutes. Dashboard log: `/d/cinema11-logs`. Các truy vấn tương ứng định dạng thực:
+
+```logql
+{project="cinema11",service="app"} | json
+{project="cinema11",service="app",level="error"} | json
+{project="cinema11",service="app"} | json | status >= 400
+sum by (service) (count_over_time({project="cinema11"}[1m]))
+{project="cinema11",service="nginx",stream="access"} | json | status >= 400
+```
+
+Error-level có thể không có log khi hệ thống bình thường; tạo request API với payload sai để demo HTTP 400, không gây lỗi database. Chạy `node tests/logging.cjs` kiểm tra nhận log và LogQL; `node tests/grafana.cjs --loki` kiểm tra datasource. Nếu chưa có log, chờ một chu kỳ gửi (~10–15 giây), tạo vài request, xem `scripts/stack.ps1 logs`; kiểm tra permissions volume, nhãn và khoảng thời gian.
+
+## Đối chiếu 7 tiêu chí
+
+Đây là bảng theo 7 nhóm yêu cầu người dùng cung cấp; chưa có rubric/trọng số chính thức của giảng viên.
+
+| Tiêu chí | File | Cách kiểm chứng |
+|---|---|---|
+| 1. Website đặt vé | server.js, public/, tests/integration.cjs | Tìm phim, chi tiết, ngày/phòng, 3 trạng thái ghế; đặt vé nhận mã; race 201/409 |
+| 2. Database | database/01-schema.sql, 02-users.sh | phpMyAdmin xem 6 bảng, FK, UNIQUE; kiểm tra đơn/chi tiết; restart giữ ghế |
+| 3. Docker Compose + Nginx | Dockerfile, compose.yaml, nginx/default.conf | compose ps, health endpoint qua Nginx, response headers, volume |
+| 4. Prometheus + Grafana | compose.monitoring.yaml, monitoring/prometheus.yml, grafana/ | 4 targets UP, mọi panel có dữ liệu, tests/monitoring.cjs |
+| 5. Loki + Promtail | compose.logging.yaml, monitoring/loki.yml, promtail.yml | Loki Explore 3 dạng LogQL, tests/logging.cjs; công bố EOL |
+| 6. Hardening | Dockerfile, Compose, .gitignore, nginx/, database/02-users.sh | app id non-root, DB không publish, grants, headers, không track .env |
+| 7. README/minh chứng | README.md, docs/ | Hướng dẫn demo, danh sách ảnh, báo cáo ≥10 trang, kết quả thật và 3 commit |
+
+Xem [kịch bản demo](docs/DEMO.md), [dàn ý báo cáo](docs/REPORT-OUTLINE.md) và [kết quả kiểm tra](docs/VERIFICATION.md). Chưa push GitHub.
+
+Kiểm thử trình duyệt trên máy có Microsoft Edge: `npm.cmd ci`, rồi `npm.cmd run test:browser`. Kiểm tra hardening cần Docker: `node tests/hardening.cjs`. `node tests/fresh-init.cjs` tạo container MySQL tạm với volume riêng để kiểm tra script init và tự dừng/xóa container tạm; không xóa dữ liệu cinema11. Các test đặt vé tạo đơn demo thật, chọn ghế còn trống; đổi sang suất khác hoặc thêm lịch nếu chạy lặp quá nhiều lần. Dùng `$env:TEST_URL='http://localhost:3001'` nếu chuyển website về cổng 3001; TEST_URL mặc định 3003 theo phiên triển khai này.

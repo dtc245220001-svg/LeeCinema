@@ -1,5 +1,5 @@
 {
-  "time": "2026-10-09T13:59:53.373Z",
+  "time": "2026-10-09T14:13:12.900Z",
   "targets": [
     {
       "job": "containers",
@@ -30,18 +30,18 @@
   ],
   "nginx_http_requests_total": [
     {
-      "value": "39"
+      "value": "44"
     }
   ],
   "mysql_global_status_queries": [
     {
-      "value": "298"
+      "value": "1856"
     }
   ],
   "container_memory_working_set_bytes{container_label_com_docker_compose_project=\"cinema11\"}": [
     {
       "service": "mysql-exporter",
-      "value": "8130560"
+      "value": "8224768"
     },
     {
       "service": "phpmyadmin",
@@ -49,69 +49,97 @@
     },
     {
       "service": "db",
-      "value": "459509760"
+      "value": "476606464"
     },
     {
       "service": "prometheus",
-      "value": "49946624"
+      "value": "98861056"
     },
     {
       "service": "nginx-exporter",
-      "value": "7393280"
+      "value": "8146944"
     },
     {
       "service": "nginx",
-      "value": "7970816"
+      "value": "8376320"
     },
     {
       "service": "grafana",
-      "value": "78323712"
+      "value": "80723968"
     },
     {
       "service": "cadvisor",
-      "value": "24936448"
+      "value": "25403392"
     },
     {
       "service": "app",
-      "value": "23699456"
+      "value": "25444352"
+    },
+    {
+      "service": "promtail",
+      "value": "19820544"
+    },
+    {
+      "service": "loki",
+      "value": "65196032"
+    },
+    {
+      "service": "loki",
+      "value": "53215232"
+    },
+    {
+      "service": "promtail",
+      "value": "18964480"
+    },
+    {
+      "service": "app",
+      "value": "30302208"
+    },
+    {
+      "service": "app",
+      "value": "4100096"
     }
   ],
   "rate(container_cpu_usage_seconds_total{container_label_com_docker_compose_project=\"cinema11\"}[1m])": [
     {
       "service": "mysql-exporter",
-      "value": "0.0008011486949987846"
+      "value": "0.0027430943991326433"
     },
     {
       "service": "phpmyadmin",
-      "value": "0.000039954682779455625"
+      "value": "0.000038904665314401125"
     },
     {
       "service": "db",
-      "value": "0.010922611562383167"
+      "value": "0.009321167423990286"
     },
     {
       "service": "prometheus",
-      "value": "0.0034956892639985498"
+      "value": "0.002956288938937481"
     },
     {
       "service": "nginx-exporter",
-      "value": "0.00007952603818438466"
+      "value": "0.00020154682274247458"
     },
     {
       "service": "nginx",
-      "value": "0.0016160330916427008"
+      "value": "0.0026771638695078257"
     },
     {
       "service": "grafana",
-      "value": "0.003078399487179471"
+      "value": "0.003012843889650041"
     },
     {
       "service": "cadvisor",
-      "value": "0.005956910530331933"
+      "value": "0.013181568088033023"
     },
     {
-      "service": "app",
-      "value": "0.013069233064756798"
+      "service": "loki",
+      "value": "0.009777864855451061"
+    },
+    {
+      "service": "promtail",
+      "value": "0.006931492011914432"
     }
   ]
 }

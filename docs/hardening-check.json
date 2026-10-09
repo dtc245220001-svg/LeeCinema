@@ -1,0 +1,16 @@
+{
+  "time": "2026-10-09T14:17:19.259Z",
+  "appUser": "node",
+  "readOnly": true,
+  "capDropAll": true,
+  "noNewPrivileges": true,
+  "mysqlPublished": false,
+  "database": {
+    "unique": true,
+    "limitedGrants": true,
+    "counts": {
+      "bookings": 8,
+      "seats": 8
+    }
+  }
+}

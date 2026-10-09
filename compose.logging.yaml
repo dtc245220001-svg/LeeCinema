@@ -1,0 +1,25 @@
+services:
+  loki:
+    image: grafana/loki:3.5.12
+    command: ["-config.file=/etc/loki/config.yml"]
+    volumes:
+      - ./monitoring/loki.yml:/etc/loki/config.yml:ro
+      - loki_data:/loki
+    networks: [monitoring]
+    restart: unless-stopped
+  promtail:
+    image: grafana/promtail:3.5.12
+    command: ["-config.file=/etc/promtail/config.yml"]
+    volumes:
+      - ./monitoring/promtail.yml:/etc/promtail/config.yml:ro
+      - app_logs:/logs/app:ro
+      - nginx_logs:/logs/nginx:ro
+      - promtail_positions:/positions
+    networks: [monitoring]
+    depends_on: [loki]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
+volumes:
+  loki_data:
+  promtail_positions:
