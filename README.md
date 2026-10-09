@@ -56,4 +56,18 @@ Seed tạo ba phim, hai phòng với 40 ghế/phòng và lịch bảy ngày kế
 - PowerShell chặn script: lệnh `powershell -ExecutionPolicy Bypass -File scripts/setup.ps1` chỉ thay policy cho tiến trình đó.
 - Không có phim/suất chiếu: kiểm tra tìm kiếm và lịch trong database, UI có trạng thái rỗng riêng.
 
-Các phần giám sát, log và minh chứng được bổ sung ở các mốc tiếp theo.
+## Giám sát Prometheus / Grafana
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/stack.ps1 up
+powershell -ExecutionPolicy Bypass -File scripts/stack.ps1 ps
+node tests/monitoring.cjs
+# Dừng toàn bộ stack, giữ volume:
+powershell -ExecutionPolicy Bypass -File scripts/stack.ps1 down
+```
+
+`stack.ps1` dùng compose.yaml + compose.monitoring.yaml và tự thêm compose.logging.yaml khi file tồn tại. Lệnh compose chỉ với file nền không quản lý đầy đủ dịch vụ giám sát/log; dùng stack.ps1 cho demo cuối cùng. Grafana đăng nhập admin, mật khẩu GRAFANA_PASSWORD trong .env. Dashboard Cinema 11 được provision tự động tại `/d/cinema11`; datasource Prometheus trỏ tới service nội bộ. Prometheus `/targets` phải có bốn targets UP; mysql_up và nginx_up phải là 1. Dashboard hiển thị requests/s, queries/s, connections, CPU và RAM container cinema11 từ exporters thực.
+
+cAdvisor cần privileged và đọc socket/mount Docker để lấy metadata: đây là ngoại lệ hardening có chủ đích, không publish cổng và không áp dụng cho app. Có thể nhìn thấy metadata container khác ở exporter, nhưng Prometheus lọc lưu chỉ project cinema11. Trên Docker Desktop, số liệu phản ánh container trong Linux VM, không phải toàn bộ Windows host. Docker Engine mới yêu cầu API mới; cAdvisor 0.55.1 được chọn để phù hợp. Nếu thiếu nhãn hoặc không có metrics từng container, kiểm tra logs cAdvisor, quyền đọc socket và mount. Không dùng số liệu root cgroup để giả làm container metrics.
+
+Tham khảo cấu hình exporter: https://github.com/prometheus/mysqld_exporter ; cAdvisor: https://github.com/google/cadvisor . Phiên bản pin trong các file Compose, không dùng latest; pin không có nghĩa là đã kiểm toán toàn bộ lỗ hổng.

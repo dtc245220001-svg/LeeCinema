@@ -1,0 +1,117 @@
+{
+  "time": "2026-10-09T13:59:53.373Z",
+  "targets": [
+    {
+      "job": "containers",
+      "health": "up"
+    },
+    {
+      "job": "mysql",
+      "health": "up"
+    },
+    {
+      "job": "nginx",
+      "health": "up"
+    },
+    {
+      "job": "prometheus",
+      "health": "up"
+    }
+  ],
+  "mysql_up": [
+    {
+      "value": "1"
+    }
+  ],
+  "nginx_up": [
+    {
+      "value": "1"
+    }
+  ],
+  "nginx_http_requests_total": [
+    {
+      "value": "39"
+    }
+  ],
+  "mysql_global_status_queries": [
+    {
+      "value": "298"
+    }
+  ],
+  "container_memory_working_set_bytes{container_label_com_docker_compose_project=\"cinema11\"}": [
+    {
+      "service": "mysql-exporter",
+      "value": "8130560"
+    },
+    {
+      "service": "phpmyadmin",
+      "value": "12824576"
+    },
+    {
+      "service": "db",
+      "value": "459509760"
+    },
+    {
+      "service": "prometheus",
+      "value": "49946624"
+    },
+    {
+      "service": "nginx-exporter",
+      "value": "7393280"
+    },
+    {
+      "service": "nginx",
+      "value": "7970816"
+    },
+    {
+      "service": "grafana",
+      "value": "78323712"
+    },
+    {
+      "service": "cadvisor",
+      "value": "24936448"
+    },
+    {
+      "service": "app",
+      "value": "23699456"
+    }
+  ],
+  "rate(container_cpu_usage_seconds_total{container_label_com_docker_compose_project=\"cinema11\"}[1m])": [
+    {
+      "service": "mysql-exporter",
+      "value": "0.0008011486949987846"
+    },
+    {
+      "service": "phpmyadmin",
+      "value": "0.000039954682779455625"
+    },
+    {
+      "service": "db",
+      "value": "0.010922611562383167"
+    },
+    {
+      "service": "prometheus",
+      "value": "0.0034956892639985498"
+    },
+    {
+      "service": "nginx-exporter",
+      "value": "0.00007952603818438466"
+    },
+    {
+      "service": "nginx",
+      "value": "0.0016160330916427008"
+    },
+    {
+      "service": "grafana",
+      "value": "0.003078399487179471"
+    },
+    {
+      "service": "cadvisor",
+      "value": "0.005956910530331933"
+    },
+    {
+      "service": "app",
+      "value": "0.013069233064756798"
+    }
+  ]
+}

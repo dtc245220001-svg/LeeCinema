@@ -1,0 +1,14 @@
+{
+ "uid":"cinema11","title":"Cinema 11 · Hệ thống đặt vé","schemaVersion":39,"version":1,"refresh":"15s","timezone":"Asia/Ho_Chi_Minh","time":{"from":"now-15m","to":"now"},"tags":["cinema11"],
+ "panels":[
+  {"id":1,"type":"stat","title":"MySQL sẵn sàng (1 = OK)","datasource":{"type":"prometheus","uid":"prometheus"},"gridPos":{"x":0,"y":0,"w":8,"h":5},"targets":[{"refId":"A","expr":"mysql_up","instant":true}]},
+  {"id":2,"type":"stat","title":"Nginx sẵn sàng (1 = OK)","datasource":{"type":"prometheus","uid":"prometheus"},"gridPos":{"x":8,"y":0,"w":8,"h":5},"targets":[{"refId":"A","expr":"nginx_up","instant":true}]},
+  {"id":3,"type":"stat","title":"Prometheus targets UP","datasource":{"type":"prometheus","uid":"prometheus"},"gridPos":{"x":16,"y":0,"w":8,"h":5},"targets":[{"refId":"A","expr":"sum(up)","instant":true}]},
+  {"id":4,"type":"timeseries","title":"Nginx requests / giây","datasource":{"type":"prometheus","uid":"prometheus"},"gridPos":{"x":0,"y":5,"w":12,"h":8},"targets":[{"refId":"A","expr":"rate(nginx_http_requests_total[1m])","legendFormat":"requests/s"}]},
+  {"id":5,"type":"timeseries","title":"MySQL queries / giây","datasource":{"type":"prometheus","uid":"prometheus"},"gridPos":{"x":12,"y":5,"w":12,"h":8},"targets":[{"refId":"A","expr":"rate(mysql_global_status_queries[1m])","legendFormat":"queries/s"}]},
+  {"id":6,"type":"timeseries","title":"CPU từng container · cinema11","datasource":{"type":"prometheus","uid":"prometheus"},"gridPos":{"x":0,"y":13,"w":12,"h":8},"targets":[{"refId":"A","expr":"sum by (container_label_com_docker_compose_service) (rate(container_cpu_usage_seconds_total{container_label_com_docker_compose_project=\"cinema11\"}[1m]))","legendFormat":"{{container_label_com_docker_compose_service}}"}]},
+  {"id":7,"type":"timeseries","title":"RAM từng container · cinema11","datasource":{"type":"prometheus","uid":"prometheus"},"fieldConfig":{"defaults":{"unit":"bytes"}},"gridPos":{"x":12,"y":13,"w":12,"h":8},"targets":[{"refId":"A","expr":"sum by (container_label_com_docker_compose_service) (container_memory_working_set_bytes{container_label_com_docker_compose_project=\"cinema11\"})","legendFormat":"{{container_label_com_docker_compose_service}}"}]},
+  {"id":8,"type":"timeseries","title":"Kết nối MySQL hiện tại","datasource":{"type":"prometheus","uid":"prometheus"},"gridPos":{"x":0,"y":21,"w":12,"h":8},"targets":[{"refId":"A","expr":"mysql_global_status_threads_connected","legendFormat":"connections"}]},
+  {"id":9,"type":"timeseries","title":"Kết nối Nginx hiện tại","datasource":{"type":"prometheus","uid":"prometheus"},"gridPos":{"x":12,"y":21,"w":12,"h":8},"targets":[{"refId":"A","expr":"nginx_connections_active","legendFormat":"active"}]}
+ ]
+}
