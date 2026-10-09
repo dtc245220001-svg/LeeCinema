@@ -1,0 +1,8 @@
+node_modules
+.git
+.env
+logs
+docs
+tests
+monitoring
+database

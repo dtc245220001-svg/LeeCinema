@@ -1,0 +1,2 @@
+const assert=require('node:assert/strict');const fs=require('fs');const record=JSON.parse(fs.readFileSync('docs/persistence-check.json','utf8'));
+(async()=>{const r=await fetch((process.env.TEST_URL||'http://localhost:3003')+`/api/showtimes/${record.showtimeId}/seats`);assert(r.ok);const seats=await r.json();assert.equal(seats.find(s=>s.id===record.seatId).booked,1);console.log('PASS: seat remains booked after restart; code '+record.code);})().catch(e=>{console.error(e);process.exit(1)});

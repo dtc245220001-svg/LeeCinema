@@ -1,0 +1,6 @@
+node_modules/
+.env
+logs/
+monitoring/mysql/exporter.cnf
+docs/evidence/*.png
+docs/evidence/*.jpg

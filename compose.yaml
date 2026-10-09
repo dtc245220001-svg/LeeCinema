@@ -1,0 +1,76 @@
+name: cinema11
+services:
+  db:
+    image: mysql:8.4.8
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Run setup first}
+      MYSQL_DATABASE: cinema
+      DB_PASSWORD: ${DB_PASSWORD:?Run setup first}
+      EXPORTER_PASSWORD: ${EXPORTER_PASSWORD:?Run setup first}
+      TZ: Asia/Ho_Chi_Minh
+    command: ["--default-time-zone=+07:00"]
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./database:/docker-entrypoint-initdb.d:ro
+    networks: [database]
+    healthcheck:
+      test: ["CMD-SHELL", "MYSQL_PWD=$$MYSQL_ROOT_PASSWORD mysql -uroot -e 'SELECT 1' cinema >/dev/null 2>&1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+  app:
+    image: cinema11-app:1.0.0
+    build: .
+    environment:
+      PORT: 3001
+      DB_HOST: db
+      DB_USER: cinema_app
+      DB_PASSWORD: ${DB_PASSWORD}
+      LOG_DIR: /app/logs
+    volumes: [app_logs:/app/logs]
+    networks: [frontend, database]
+    depends_on:
+      db: {condition: service_healthy}
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3001/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+  nginx:
+    image: nginx:1.28.2-alpine
+    ports: ["127.0.0.1:${WEB_PORT:-3001}:80"]
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - nginx_logs:/var/log/cinema
+    networks: [frontend]
+    depends_on:
+      app: {condition: service_healthy}
+    security_opt: [no-new-privileges:true]
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+  phpmyadmin:
+    image: phpmyadmin:5.2.3-apache
+    environment: {PMA_HOST: db, PMA_ARBITRARY: 0}
+    ports: ["127.0.0.1:${PMA_PORT:-8082}:80"]
+    networks: [database, frontend]
+    depends_on:
+      db: {condition: service_healthy}
+    restart: unless-stopped
+networks:
+  frontend:
+  database:
+    internal: true
+volumes:
+  db_data:
+  app_logs:
+  nginx_logs:
