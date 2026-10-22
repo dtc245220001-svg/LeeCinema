@@ -112,7 +112,7 @@ $('booking-form').onsubmit = async event => {
   busy = true; updateTotal(); $('date').disabled = true; $('showtime').disabled = true; $('form-status').textContent = 'Đang xác nhận đặt vé…';
   const form = new FormData(event.target);
   try {
-    const result = await api('/api/bookings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ showtimeId: currentShow.id, seatIds: [...selected], name: form.get('name'), email: form.get('email') }) });
+    const result = await api('/api/bookings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ showtimeId: currentShow.id, seatIds: [...selected], name: form.get('name'), email: form.get('email'), phone: form.get('phone') }) });
     $('receipt-code').textContent = result.code; $('receipt-info').replaceChildren();
     for (const [key, val] of [['Phim', result.movie], ['Suất chiếu', result.starts_at], ['Phòng', result.room], ['Ghế', result.seats.join(', ')], ['Tổng tiền', money(result.total)]]) $('receipt-info').append(element('dt', key), element('dd', val));
     $('receipt').hidden = false; $('receipt').scrollIntoView({ behavior: 'smooth' }); $('form-status').textContent = 'Đặt vé thành công.';

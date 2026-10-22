@@ -17,8 +17,9 @@ app.get('/api/showtimes',async(req,res,next)=>{try{const [rows]=await pool.query
 app.get('/api/movies/:id/showtimes',async(req,res,next)=>{try{const [rows]=await pool.execute('SELECT s.id,s.starts_at,s.price,r.name AS room FROM showtimes s JOIN rooms r ON r.id=s.room_id WHERE s.movie_id=? AND s.starts_at>NOW() ORDER BY s.starts_at',[req.params.id]);res.json(rows);}catch(e){next(e);}});
 app.get('/api/showtimes/:id/seats',async(req,res,next)=>{try{const [rows]=await pool.execute('SELECT a.id,a.row_label,a.seat_number,EXISTS(SELECT 1 FROM booking_seats b WHERE b.showtime_id=s.id AND b.seat_id=a.id) AS booked FROM showtimes s JOIN seats a ON a.room_id=s.room_id WHERE s.id=? ORDER BY a.row_label,a.seat_number',[req.params.id]);if(!rows.length)return res.status(404).json({error:'Không tìm thấy suất chiếu.'});res.json(rows);}catch(e){next(e);}});
 app.post('/api/bookings',async(req,res,next)=>{
- const {showtimeId,seatIds,name,email}=req.body||{};
- if(!Number.isSafeInteger(showtimeId)||!Array.isArray(seatIds)||seatIds.length<1||seatIds.length>8||seatIds.some(x=>!Number.isSafeInteger(x)||x<1)||new Set(seatIds).size!==seatIds.length||typeof name!=='string'||name.trim().length<2||name.trim().length>100||typeof email!=='string'||email.length>254||! /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return res.status(400).json({error:'Chọn 1–8 ghế, nhập họ tên và email hợp lệ.'});
+ const {showtimeId,seatIds,name,email,phone}=req.body||{};
+ const normalizedPhone=typeof phone==='string'?phone.replace(/[\s-]/g,''):'';
+ if(!Number.isSafeInteger(showtimeId)||!Array.isArray(seatIds)||seatIds.length<1||seatIds.length>8||seatIds.some(x=>!Number.isSafeInteger(x)||x<1)||new Set(seatIds).size!==seatIds.length||typeof name!=='string'||name.trim().length<2||name.trim().length>100||typeof email!=='string'||email.length>254||! /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||!/^0\d{9}$/.test(normalizedPhone))return res.status(400).json({error:'Chọn 1–8 ghế, nhập họ tên, email và số điện thoại hợp lệ.'});
  let conn;
  try{conn=await pool.getConnection();await conn.beginTransaction();
  const [shows]=await conn.execute('SELECT * FROM showtimes WHERE id=? AND starts_at>NOW() FOR UPDATE',[showtimeId]);
@@ -31,7 +32,7 @@ app.post('/api/bookings',async(req,res,next)=>{
  const [taken]=await conn.execute(`SELECT seat_id FROM booking_seats WHERE showtime_id=? AND seat_id IN (${slots})`,[showtimeId,...ids]);
  if(taken.length){await conn.rollback();return res.status(409).json({error:'Ghế vừa được đặt. Vui lòng chọn ghế khác.'});}
  const total=Number(show.price)*ids.length,code='VE-'+crypto.randomBytes(8).toString('hex').toUpperCase();
- const [result]=await conn.execute('INSERT INTO bookings(code,showtime_id,customer_name,customer_email,total,payment_status) VALUES(?,?,?,?,?,?)',[code,showtimeId,name.trim(),email.trim(),total,'simulated']);
+ const [result]=await conn.execute('INSERT INTO bookings(code,showtime_id,customer_name,customer_email,customer_phone,total,payment_status) VALUES(?,?,?,?,?,?,?)',[code,showtimeId,name.trim(),email.trim(),normalizedPhone,total,'simulated']);
  for(const id of ids)await conn.execute('INSERT INTO booking_seats(booking_id,showtime_id,seat_id,unit_price) VALUES(?,?,?,?)',[result.insertId,showtimeId,id,show.price]);
  await conn.commit();res.status(201).json({code,movie:show.title,starts_at:show.starts_at,room:show.room,seats:seats.map(s=>s.label),total,payment:'Thanh toán giả lập'});
  }catch(e){if(conn)await conn.rollback();if(e.code==='ER_DUP_ENTRY')return res.status(409).json({error:'Ghế vừa được đặt. Vui lòng chọn ghế khác.'});next(e);}finally{if(conn)conn.release();}
