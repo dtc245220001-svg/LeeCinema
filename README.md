@@ -33,7 +33,7 @@ node tests/integration.cjs
 docker compose restart db app nginx
 powershell -ExecutionPolicy Bypass -File scripts/stack.ps1 up
 node tests/persistence.cjs
-# Dừng và gỡ container của riêng cinema11, giữ dữ liệu:
+# Dừng và gỡ container của riêng leecinema, giữ dữ liệu:
 powershell -ExecutionPolicy Bypass -File scripts/stack.ps1 down
 # Chạy lại:
 powershell -ExecutionPolicy Bypass -File scripts/stack.ps1 up
@@ -88,26 +88,26 @@ node tests/monitoring.cjs
 powershell -ExecutionPolicy Bypass -File scripts/stack.ps1 down
 ```
 
-`stack.ps1` dùng compose.yaml + compose.monitoring.yaml và tự thêm compose.logging.yaml khi file tồn tại. Lệnh compose chỉ với file nền không quản lý đầy đủ dịch vụ giám sát/log; dùng stack.ps1 cho demo cuối cùng. Grafana đăng nhập admin, mật khẩu GRAFANA_PASSWORD trong .env. Dashboard Cinema 11 được provision tự động tại `/d/cinema11`; datasource Prometheus trỏ tới service nội bộ. Prometheus `/targets` phải có bốn targets UP; mysql_up và nginx_up phải là 1. Dashboard hiển thị requests/s, queries/s, connections, CPU và RAM container cinema11 từ exporters thực.
+`stack.ps1` dùng compose.yaml + compose.monitoring.yaml và tự thêm compose.logging.yaml khi file tồn tại. Lệnh compose chỉ với file nền không quản lý đầy đủ dịch vụ giám sát/log; dùng stack.ps1 cho demo cuối cùng. Grafana đăng nhập admin, mật khẩu GRAFANA_PASSWORD trong .env. Dashboard Cinema 11 được provision tự động tại `/d/leecinema`; datasource Prometheus trỏ tới service nội bộ. Prometheus `/targets` phải có bốn targets UP; mysql_up và nginx_up phải là 1. Dashboard hiển thị requests/s, queries/s, connections, CPU và RAM container leecinema từ exporters thực.
 
-cAdvisor cần privileged và đọc socket/mount Docker để lấy metadata: đây là ngoại lệ hardening có chủ đích, không publish cổng và không áp dụng cho app. Có thể nhìn thấy metadata container khác ở exporter, nhưng Prometheus lọc lưu chỉ project cinema11. Trên Docker Desktop, số liệu phản ánh container trong Linux VM, không phải toàn bộ Windows host. Docker Engine mới yêu cầu API mới; cAdvisor 0.55.1 được chọn để phù hợp. Nếu thiếu nhãn hoặc không có metrics từng container, kiểm tra logs cAdvisor, quyền đọc socket và mount. Không dùng số liệu root cgroup để giả làm container metrics.
+cAdvisor cần privileged và đọc socket/mount Docker để lấy metadata: đây là ngoại lệ hardening có chủ đích, không publish cổng và không áp dụng cho app. Có thể nhìn thấy metadata container khác ở exporter, nhưng Prometheus lọc lưu chỉ project leecinema. Trên Docker Desktop, số liệu phản ánh container trong Linux VM, không phải toàn bộ Windows host. Docker Engine mới yêu cầu API mới; cAdvisor 0.55.1 được chọn để phù hợp. Nếu thiếu nhãn hoặc không có metrics từng container, kiểm tra logs cAdvisor, quyền đọc socket và mount. Không dùng số liệu root cgroup để giả làm container metrics.
 
 Tham khảo cấu hình exporter: https://github.com/prometheus/mysqld_exporter ; cAdvisor: https://github.com/google/cadvisor . Phiên bản pin trong các file Compose, không dùng latest; pin không có nghĩa là đã kiểm toán toàn bộ lỗ hổng.
 
 ## Log tập trung: Loki / Promtail
 
-Loki và Promtail dùng cặp 3.5.12, file config được mount read-only. Promtail đọc volume log app/Nginx, không cần Docker socket; positions có volume riêng để tiếp tục sau restart. Nhãn cố định `project="cinema11"`, `service="app"` hoặc `service="nginx"`, `stream="access"/"error"` với Nginx. Log app là JSON: time, level, service, method, path, status, duration_ms; không ghi body, tên, email, password, token hoặc query string. Nginx access log JSON không ghi IP, cookie, authorization, query string hay request body. Loki lưu filesystem với retention 7 ngày; file nguồn trong volume cần chính sách xoay log khi vận hành dài hạn.
+Loki và Promtail dùng cặp 3.5.12, file config được mount read-only. Promtail đọc volume log app/Nginx, không cần Docker socket; positions có volume riêng để tiếp tục sau restart. Nhãn cố định `project="leecinema"`, `service="app"` hoặc `service="nginx"`, `stream="access"/"error"` với Nginx. Log app là JSON: time, level, service, method, path, status, duration_ms; không ghi body, tên, email, password, token hoặc query string. Nginx access log JSON không ghi IP, cookie, authorization, query string hay request body. Loki lưu filesystem với retention 7 ngày; file nguồn trong volume cần chính sách xoay log khi vận hành dài hạn.
 
 **Promtail đã EOL ngày 02/03/2026**, không còn cập nhật hỗ trợ. Giữ Promtail để đáp ứng đề môn học; hệ thống production nên chuyển sang Grafana Alloy. Nguồn chính thức: https://grafana.com/docs/loki/latest/send-data/promtail/ . Loki auth tắt trong mạng monitoring riêng và không publish host; không dùng cấu hình này để công khai Loki.
 
-Trong Grafana Explore chọn Loki, time range Last 15 minutes. Dashboard log: `/d/cinema11-logs`. Các truy vấn tương ứng định dạng thực:
+Trong Grafana Explore chọn Loki, time range Last 15 minutes. Dashboard log: `/d/leecinema-logs`. Các truy vấn tương ứng định dạng thực:
 
 ```logql
-{project="cinema11",service="app"} | json
-{project="cinema11",service="app",level="error"} | json
-{project="cinema11",service="app"} | json | status >= 400
-sum by (service) (count_over_time({project="cinema11"}[1m]))
-{project="cinema11",service="nginx",stream="access"} | json | status >= 400
+{project="leecinema",service="app"} | json
+{project="leecinema",service="app",level="error"} | json
+{project="leecinema",service="app"} | json | status >= 400
+sum by (service) (count_over_time({project="leecinema"}[1m]))
+{project="leecinema",service="nginx",stream="access"} | json | status >= 400
 ```
 
 Error-level có thể không có log khi hệ thống bình thường; tạo request API với payload sai để demo HTTP 400, không gây lỗi database. Chạy `node tests/logging.cjs` kiểm tra nhận log và LogQL; `node tests/grafana.cjs --loki` kiểm tra datasource. Nếu chưa có log, chờ một chu kỳ gửi (~10–15 giây), tạo vài request, xem `scripts/stack.ps1 logs`; kiểm tra permissions volume, nhãn và khoảng thời gian.
@@ -130,4 +130,4 @@ Trước khi nộp: điền thông tin bìa còn thiếu, xác nhận MSSV và �
 
 Xem [kịch bản demo](docs/DEMO.md), [báo cáo](docs/BAO-CAO-DE-11.pdf), [checklist theo Word](docs/DE-11-CHECKLIST.md) và [kết quả kiểm tra](docs/VERIFICATION.md).
 
-Kiểm thử trình duyệt trên máy có Microsoft Edge: `npm.cmd ci`, rồi `npm.cmd run test:browser`. Kiểm tra hardening cần Docker: `node tests/hardening.cjs`. `node tests/fresh-init.cjs` tạo container MySQL tạm với volume riêng để kiểm tra script init và tự dừng/xóa container tạm; không xóa dữ liệu cinema11. Các test đặt vé tạo đơn demo thật, chọn ghế còn trống; đổi sang suất khác hoặc thêm lịch nếu chạy lặp quá nhiều lần. Dùng `$env:TEST_URL='http://localhost:3001'` nếu chuyển website về cổng 3001; TEST_URL mặc định 3003 theo phiên triển khai này.
+Kiểm thử trình duyệt trên máy có Microsoft Edge: `npm.cmd ci`, rồi `npm.cmd run test:browser`. Kiểm tra hardening cần Docker: `node tests/hardening.cjs`. `node tests/fresh-init.cjs` tạo container MySQL tạm với volume riêng để kiểm tra script init và tự dừng/xóa container tạm; không xóa dữ liệu leecinema. Các test đặt vé tạo đơn demo thật, chọn ghế còn trống; đổi sang suất khác hoặc thêm lịch nếu chạy lặp quá nhiều lần. Dùng `$env:TEST_URL='http://localhost:3001'` nếu chuyển website về cổng 3001; TEST_URL mặc định 3003 theo phiên triển khai này.

@@ -13,7 +13,7 @@ Website http://localhost:3003 (cổng 3001 giữ nguyên tiến trình Node theo
 
 ## Trình bày khoảng 10–15 phút
 
-1. Giới thiệu kiến trúc Nginx → Express → MySQL; hai mạng và volumes. Hiển thị compose ps của project cinema11.
+1. Giới thiệu kiến trúc Nginx → Express → MySQL; hai mạng và volumes. Hiển thị compose ps của project leecinema.
 2. Website: tìm từ “vũ trụ”, tìm chuỗi không tồn tại, mở chi tiết phim. Chọn ngày, suất và phòng. Chọn 2 ghế, đối chiếu tổng tiền. Nêu ghế chỉ giữ khi xác nhận, tối đa 8 ghế.
 3. Nhập tên/email, xác nhận thanh toán giả lập. Hiển thị mã vé và thông tin, tải lại để thấy ghế đã đặt. Không có giao dịch tiền thật.
 4. phpMyAdmin: SELECT từ bookings và booking_seats, chỉ dùng dữ liệu khách demo; chỉ ra UNIQUE(showtime_id,seat_id), foreign keys. Có thể chạy `SHOW CREATE TABLE booking_seats`.
@@ -35,7 +35,7 @@ node tests/persistence.cjs
 
 | Tên ảnh đề xuất | Nội dung thực tế |
 |---|---|
-| 01-stack.png | compose ps, tên cinema11, trạng thái healthy |
+| 01-stack.png | compose ps, tên leecinema, trạng thái healthy |
 | 02-movies-desktop.png | Trang danh sách phim và tìm kiếm |
 | 03-mobile.png | Trang responsive rộng khoảng 390px |
 | 04-seats.png | Ngày/suất/phòng, ghế trống/chọn/đã đặt và tổng tiền |
