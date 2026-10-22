@@ -16,3 +16,5 @@ UPDATE movies SET title='Avatar: Dòng Chảy Của Nước',genre='Khoa học v
 UPDATE movies SET poster='/posters/mai.webp' WHERE id=1;
 UPDATE movies SET poster='/posters/nhabaunu.webp' WHERE id=2;
 UPDATE movies SET poster='/posters/latmat7.webp' WHERE id=3;
+UPDATE movies SET poster='/posters/dao-pho-piano.webp' WHERE id=4;
+UPDATE movies SET poster='/posters/quy-cau.webp' WHERE id=5;
