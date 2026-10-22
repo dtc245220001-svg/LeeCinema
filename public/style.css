@@ -17,3 +17,5 @@ header{background:#111225ed;border-bottom-color:#373b5d}
 .catalog-controls{padding:16px;border:1px solid #373b5d;border-radius:14px;background:#17192d}
 @media(max-width:1050px){.movies{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:760px){.movies{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.movie-content{padding:13px}.movie h3{font-size:14px}}
+
+.catalog-controls{justify-content:flex-start}.search-label{width:min(420px,100%)}@media(max-width:760px){.catalog-controls{padding:12px}.search-label{width:100%}}

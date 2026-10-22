@@ -18,15 +18,7 @@ function element(tag, text, className) {
   return e;
 }
 function setupGenres() {
-  const genres = ['', ...new Set(allMovies.map(m => m.genre))];
-  $('genre-filters').replaceChildren();
-  for (const genre of genres) {
-    const b = element('button', genre || 'Tất cả', 'genre-button');
-    b.type = 'button'; b.classList.toggle('active', genre === selectedGenre);
-    b.setAttribute('aria-pressed', String(genre === selectedGenre));
-    b.onclick = () => { selectedGenre = genre; setupGenres(); loadMovies(); };
-    $('genre-filters').append(b);
-  }
+  selectedGenre = '';
 }
 async function loadMovies() {
   const version = ++movieVersion;
