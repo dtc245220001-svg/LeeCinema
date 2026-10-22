@@ -2,3 +2,18 @@
 
 /* Movie booking button text */
 .movie-content > button { background: var(--accent); color: #182013; }
+
+/* Lee Cinema refresh */
+:root{--bg:#0b1220;--card:#121d2e;--line:#263750;--text:#f7f9fc;--muted:#aab8cb;--accent:#f5d36b}
+body{background:radial-gradient(circle at 80% -10%,#1e3550 0,transparent 36%),var(--bg)}
+header{background:#0b1220ed;border-bottom-color:#263750}
+.hero{border:1px solid #314661;box-shadow:0 22px 60px #03081466}
+.movies{grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}
+.movie{border-radius:14px;border-color:#2b405d;box-shadow:0 12px 30px #0308144d}
+.movie-visual{aspect-ratio:4/5}
+.movie-content{padding:18px}
+.movie h3{font-size:18px}
+.movie button{border-radius:10px}
+.catalog-controls{padding:16px;border:1px solid #263750;border-radius:14px;background:#101a2a}
+@media(max-width:1050px){.movies{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:760px){.movies{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.movie-content{padding:13px}.movie h3{font-size:14px}}
