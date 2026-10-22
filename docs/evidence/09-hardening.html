@@ -1,0 +1,23 @@
+<!doctype html><meta charset="utf-8"><style>body{font-family:Segoe UI,sans-serif;margin:40px;background:#f4f7fa;color:#15293b}h1{font-size:26px}h2{font-size:17px}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:white;border:1px solid #cad6df;padding:15px;font-size:13px}p{color:#526575}</style><h1>Quyền container, mạng và security headers</h1><p>Phiếu kiểm chứng tự động từ dữ liệu thật; không phải ảnh chụp cửa sổ terminal. Thời điểm: 2026-10-22T03:46:14.750Z</p><h2>Ứng dụng</h2><pre>{
+  &quot;user&quot;: &quot;node&quot;,
+  &quot;readOnly&quot;: true,
+  &quot;capDrop&quot;: [
+    &quot;ALL&quot;
+  ],
+  &quot;securityOpt&quot;: [
+    &quot;no-new-privileges:true&quot;
+  ],
+  &quot;networks&quot;: [
+    &quot;cinema11_database&quot;,
+    &quot;cinema11_frontend&quot;
+  ]
+}</pre><h2>MySQL</h2><pre>{
+  &quot;publishedPorts&quot;: {},
+  &quot;networks&quot;: [
+    &quot;cinema11_database&quot;
+  ]
+}</pre><h2>GET /api/health qua Nginx</h2><pre>content-security-policy: default-src &#39;self&#39;; script-src &#39;self&#39;; style-src &#39;self&#39;; img-src &#39;self&#39;; connect-src &#39;self&#39;; frame-ancestors &#39;none&#39;; base-uri &#39;self&#39;; form-action &#39;self&#39;
+x-content-type-options: nosniff
+x-frame-options: DENY
+referrer-policy: no-referrer
+permissions-policy: camera=(), microphone=(), geolocation=()</pre>

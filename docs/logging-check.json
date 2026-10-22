@@ -1,5 +1,5 @@
 {
-  "time": "2026-10-09T14:17:19.503Z",
+  "time": "2026-10-22T01:39:11.015Z",
   "results": [
     {
       "query": "{project=\"cinema11\",service=\"app\"} | json",
@@ -14,7 +14,7 @@
     {
       "query": "{project=\"cinema11\",service=\"app\"} | json | status >= 400",
       "resultType": "streams",
-      "streams": 19
+      "streams": 7
     },
     {
       "query": "sum by (service) (count_over_time({project=\"cinema11\"}[1m]))",

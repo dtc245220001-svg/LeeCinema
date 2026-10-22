@@ -2,7 +2,13 @@
 
 Dự án môn Triển khai và Quản trị Hệ thống Phần mềm. Node.js/Express, HTML/CSS/JS thuần, MySQL và Docker Compose. Thanh toán hoàn toàn giả lập.
 
+Sinh viên: **Trần Nhật Lệ**. Repository: **[dtc245220001-svg/LeeCinema](https://github.com/dtc245220001-svg/LeeCinema)**. Thông tin lớp, trường/khoa và giảng viên trên bìa cần sinh viên bổ sung/xác nhận trước khi nộp.
+
+Repository đã tạo; mã nguồn **chưa push**, đang chờ người dùng duyệt nội dung công khai theo yêu cầu kiểm duyệt tự động. Xem [phạm vi công bố](docs/PUBLICATION.md).
+
 ## Khởi chạy trên Windows / PowerShell
+
+Đối chiếu theo file Word mới: [checklist 7 giai đoạn](docs/DE-11-CHECKLIST.md). Hồ sơ báo cáo được xuất tại [Word](docs/BAO-CAO-DE-11.docx), [PDF](docs/BAO-CAO-DE-11.pdf) và [HTML](docs/BAO-CAO-DE-11.html); các trường thông tin sinh viên/repository còn thiếu được đánh dấu rõ. Dàn ý cũ chỉ là tài liệu tham khảo.
 
 Yêu cầu Docker Desktop ở chế độ Linux containers, Docker Compose v2; Node.js 24 nếu chạy kiểm thử từ host. Dùng `npm.cmd` thay vì `npm` nếu PowerShell chặn npm.ps1.
 
@@ -25,12 +31,12 @@ Kiểm tra cổng trước khi chạy: `Get-NetTCPConnection -State Listen | Sel
 $env:TEST_URL = 'http://localhost:3003'
 node tests/integration.cjs
 docker compose restart db app nginx
-docker compose up -d --wait
+powershell -ExecutionPolicy Bypass -File scripts/stack.ps1 up
 node tests/persistence.cjs
 # Dừng và gỡ container của riêng cinema11, giữ dữ liệu:
-docker compose down
+powershell -ExecutionPolicy Bypass -File scripts/stack.ps1 down
 # Chạy lại:
-docker compose up -d --wait
+powershell -ExecutionPolicy Bypass -File scripts/stack.ps1 up
 ```
 
 `docker compose down -v` xóa toàn bộ volume của dự án, bao gồm vé, database, metrics và logs: chỉ dùng khi chủ động muốn xóa dữ liệu demo. Không dùng docker system prune.
@@ -43,17 +49,24 @@ Hardening: app USER node (UID 1000); read-only filesystem với volume log và t
 
 ## Cấu trúc
 
+Giao diện có 5 trang điều hướng bằng hash, mở trực tiếp được: `/#home` (trang chủ/banner/phim), `/#movies` (tìm kiếm/lọc thể loại), `/#schedule` (lịch chiếu và ghế trống từ MySQL), `/#about` (giới thiệu) và `/#guide` (hướng dẫn/FAQ). Menu responsive trên điện thoại. API `GET /api/showtimes` cung cấp lịch trong 14 ngày sắp tới; bấm suất chiếu sẽ chọn sẵn đúng ngày/phòng/giờ trong form đặt vé.
+
+12 poster WebP được tạo bằng imagegen và lưu nội bộ tại public/posters; database/04-poster-art.sql cập nhật đường dẫn cho cả init mới và database demo đang có, giữ nguyên đơn đã đặt. Xem nguồn/prompt và cách tối ưu ở [ARTWORK.md](docs/ARTWORK.md). Website không cần API tạo ảnh hay nguồn ảnh ngoài khi chạy.
+
 `server.js`: API và log JSON; `public/`: frontend và SVG tự tạo; `database/`: schema, seed, tài khoản; `nginx/`: proxy; `compose.yaml`: dịch vụ nền; `scripts/`: chuẩn bị môi trường; `tests/`: kiểm thử API/race/persistence; `monitoring/`: Prometheus, exporters, Grafana, Loki/Promtail; `docs/`: kết quả, demo và dàn ý báo cáo.
 
-Seed tạo ba phim, hai phòng với 40 ghế/phòng và lịch bảy ngày kế tiếp tính từ ngày khởi tạo volume. Khi lịch hết hạn, thêm lịch mới bằng SQL qua phpMyAdmin; không xóa volume để làm mới lịch nếu cần giữ đơn cũ.
+Seed tạo 12 phim, năm phòng với 40 ghế/phòng và lịch bảy ngày kế tiếp tính từ ngày khởi tạo volume. Khi lịch hết hạn, thêm lịch mới bằng SQL qua phpMyAdmin; không xóa volume để làm mới lịch nếu cần giữ đơn cũ.
+
+Cách nhanh để làm mới lịch demo mà giữ toàn bộ đơn: `powershell -ExecutionPolicy Bypass -File scripts/refresh-showtimes.ps1`. Chạy sau khi database healthy; script chỉ thêm các suất còn thiếu trong bảy ngày tới.
 
 Nếu cần lịch demo mới nhưng vẫn giữ vé cũ, đăng nhập phpMyAdmin bằng root và chạy truy vấn có thể lặp lại sau (không đổi suất đã tồn tại):
 
 ```sql
 INSERT IGNORE INTO showtimes(movie_id,room_id,starts_at,price)
-SELECT m.id,r.id,TIMESTAMP(DATE_ADD(CURDATE(),INTERVAL d.n DAY),MAKETIME(10+m.id*3+(r.id-1),0,0)),70000+(r.id-1)*20000
+SELECT m.id,r.id,TIMESTAMP(DATE_ADD(CURDATE(),INTERVAL d.n DAY),MAKETIME(CASE WHEN m.id<=3 THEN 10+m.id*3+(r.id-1) ELSE 10+MOD(m.id-4,3)*4 END,0,0)),CASE WHEN m.id<=3 THEN 70000+(r.id-1)*20000 ELSE 80000 END
 FROM movies m CROSS JOIN rooms r
-CROSS JOIN (SELECT 1 n UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7) d;
+CROSS JOIN (SELECT 1 n UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7) d
+WHERE (m.id<=3 AND r.id<=2) OR (m.id BETWEEN 4 AND 12 AND r.id=3+FLOOR((m.id-4)/3));
 ```
 
 ## Xử lý lỗi
@@ -101,18 +114,20 @@ Error-level có thể không có log khi hệ thống bình thường; tạo req
 
 ## Đối chiếu 7 tiêu chí
 
-Đây là bảng theo 7 nhóm yêu cầu người dùng cung cấp; chưa có rubric/trọng số chính thức của giảng viên.
+Đối chiếu rubric chính thức trong ảnh đề người dùng cung cấp ngày 09/10/2026. Tổng 10 điểm; trạng thái dưới đây không phải điểm giảng viên chấm.
 
-| Tiêu chí | File | Cách kiểm chứng |
-|---|---|---|
-| 1. Website đặt vé | server.js, public/, tests/integration.cjs | Tìm phim, chi tiết, ngày/phòng, 3 trạng thái ghế; đặt vé nhận mã; race 201/409 |
-| 2. Database | database/01-schema.sql, 02-users.sh | phpMyAdmin xem 6 bảng, FK, UNIQUE; kiểm tra đơn/chi tiết; restart giữ ghế |
-| 3. Docker Compose + Nginx | Dockerfile, compose.yaml, nginx/default.conf | compose ps, health endpoint qua Nginx, response headers, volume |
-| 4. Prometheus + Grafana | compose.monitoring.yaml, monitoring/prometheus.yml, grafana/ | 4 targets UP, mọi panel có dữ liệu, tests/monitoring.cjs |
-| 5. Loki + Promtail | compose.logging.yaml, monitoring/loki.yml, promtail.yml | Loki Explore 3 dạng LogQL, tests/logging.cjs; công bố EOL |
-| 6. Hardening | Dockerfile, Compose, .gitignore, nginx/, database/02-users.sh | app id non-root, DB không publish, grants, headers, không track .env |
-| 7. README/minh chứng | README.md, docs/ | Hướng dẫn demo, danh sách ảnh, báo cáo ≥10 trang, kết quả thật và 3 commit |
+| Tiêu chí | Điểm tối đa | File / minh chứng | Trạng thái và cách kiểm chứng |
+|---|---|---|---|
+| 1. Quản lý mã nguồn trên GitHub | 1.5 | Git, README, Dockerfile, compose*.yaml | Ba commit chính được giữ nguyên; các cập nhật phim/giao diện/hồ sơ có commit hoàn thiện. Repository đích LeeCinema trên tài khoản dtc245220001-svg; kiểm tra lịch sử và remote khi nộp. |
+| 2. Triển khai ứng dụng + Database | 1.5 | server.js, public/, database/, compose.yaml | Website 12 phim, đặt vé/MySQL hoạt động; phpMyAdmin HTTP 200. Demo đăng nhập DB và xem đơn; tests/integration.cjs, persistence.cjs. |
+| 3. Nginx Reverse Proxy | 1.5 | nginx/default.conf | Website qua Nginx, có CSP/nosniff/DENY và headers khác. HTTPS tùy chọn theo đề, security headers đã đáp ứng. |
+| 4. Giám sát Prometheus + Grafana | 1.5 | compose.monitoring.yaml, monitoring/prometheus.yml, monitoring/grafana/ | Metrics container/web/DB có dữ liệu thật; tests/monitoring.cjs và grafana.cjs; chụp targets/dashboard. |
+| 5. Log tập trung Loki | 1.5 | compose.logging.yaml, monitoring/loki.yml, promtail.yml, datasource logs | Loki + Promtail hoạt động, có hơn 3 LogQL bên trên; tests/logging.cjs. Công bố Promtail EOL. |
+| 6. Hardening hệ thống | 1.5 | Dockerfile, Compose, .gitignore, nginx/, database/02-users.sh | Non-root, tách mạng, mật khẩu ngẫu nhiên/env, headers, quyền DB giới hạn, cap_drop/read-only; tests/hardening.cjs. |
+| 7. Tổng thể & trình bày | 1.0 | scripts/stack.ps1, docs/DEMO.md, VERIFICATION.md, BAO-CAO-DE-11.*, evidence/ | Stack chạy bằng Compose; báo cáo PDF 22 trang có nội dung và ảnh thật, bản Word sửa được. Có ảnh DB/metrics/LogQL/hardening. Bổ sung các trường bìa còn thiếu và đối chiếu định dạng trường trước khi nộp. |
 
-Xem [kịch bản demo](docs/DEMO.md), [dàn ý báo cáo](docs/REPORT-OUTLINE.md) và [kết quả kiểm tra](docs/VERIFICATION.md). Chưa push GitHub.
+Trước khi nộp: điền thông tin bìa còn thiếu, xác nhận MSSV và định dạng trường. Ảnh evidence đã được đưa vào quản lý mã nguồn, không còn bị ignore. Ba mốc commit ban đầu được giữ nguyên; file Word cho phép commit hoàn thiện bổ sung. Repository LeeCinema được tạo theo tên người dùng chọn; chỉ ghi nhận publish sau khi kiểm tra remote HEAD khớp local.
+
+Xem [kịch bản demo](docs/DEMO.md), [báo cáo](docs/BAO-CAO-DE-11.pdf), [checklist theo Word](docs/DE-11-CHECKLIST.md) và [kết quả kiểm tra](docs/VERIFICATION.md).
 
 Kiểm thử trình duyệt trên máy có Microsoft Edge: `npm.cmd ci`, rồi `npm.cmd run test:browser`. Kiểm tra hardening cần Docker: `node tests/hardening.cjs`. `node tests/fresh-init.cjs` tạo container MySQL tạm với volume riêng để kiểm tra script init và tự dừng/xóa container tạm; không xóa dữ liệu cinema11. Các test đặt vé tạo đơn demo thật, chọn ghế còn trống; đổi sang suất khác hoặc thêm lịch nếu chạy lặp quá nhiều lần. Dùng `$env:TEST_URL='http://localhost:3001'` nếu chuyển website về cổng 3001; TEST_URL mặc định 3003 theo phiên triển khai này.

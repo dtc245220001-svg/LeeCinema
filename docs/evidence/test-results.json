@@ -1,0 +1,67 @@
+{
+  "time": "2026-10-22T01:38:48.001Z",
+  "timezone": "Asia/Saigon",
+  "cases": [
+    {
+      "name": "API / tranh chap ghe",
+      "command": "C:\\Program Files\\nodejs\\node.exe tests/integration.cjs",
+      "exitCode": 0,
+      "output": "PASS: health, headers, search, validation, wrong room, booking, server price, duplicate, simultaneous 201/409, atomic rollback.\n"
+    },
+    {
+      "name": "Trinh duyet desktop mobile",
+      "command": "C:\\Program Files\\nodejs\\node.exe tests/browser.cjs",
+      "exitCode": 0,
+      "output": "PASS: 12 WebP posters, home, genres/search, booking receipt, live schedule/preselected session, about/guide, mobile menu and no JS/CSP errors or overflow.\n"
+    },
+    {
+      "name": "Prometheus exporters",
+      "command": "C:\\Program Files\\nodejs\\node.exe tests/monitoring.cjs",
+      "exitCode": 0,
+      "output": "PASS: four targets UP; real MySQL, Nginx and project container CPU/RAM metrics.\n"
+    },
+    {
+      "name": "Grafana datasources va panels",
+      "command": "C:\\Program Files\\nodejs\\node.exe tests/grafana.cjs --loki",
+      "exitCode": 0,
+      "output": "PASS: provisioned Grafana datasource healthy; every metrics panel has real data; Loki datasource healthy.\n"
+    },
+    {
+      "name": "Loki va LogQL",
+      "command": "C:\\Program Files\\nodejs\\node.exe tests/logging.cjs",
+      "exitCode": 0,
+      "output": "PASS: Loki receives application and Nginx logs; error filter and time counts return real data.\n"
+    },
+    {
+      "name": "Hardening va database",
+      "command": "C:\\Program Files\\nodejs\\node.exe tests/hardening.cjs",
+      "exitCode": 0,
+      "output": "PASS: non-root, read-only, cap_drop, no-new-privileges, isolated unpublished MySQL, limited app grants, UNIQUE index and real booking rows.\n"
+    },
+    {
+      "name": "Khoi tao database rong",
+      "command": "C:\\Program Files\\nodejs\\node.exe tests/fresh-init.cjs",
+      "exitCode": 0,
+      "output": "PASS: fresh MySQL initialization, UTF-8 seed, 105 showtimes, 200 seats and application lock permission.\n"
+    },
+    {
+      "name": "Restart rieng dich vu du an",
+      "command": "docker compose -f compose.yaml -f compose.monitoring.yaml -f compose.logging.yaml restart db app nginx",
+      "exitCode": 0,
+      "output": " Container cinema11-nginx-1 Restarting \n Container cinema11-db-1 Restarting \n Container cinema11-app-1 Restarting \n Container cinema11-app-1 Started \n Container cinema11-nginx-1 Started \n Container cinema11-db-1 Started \n"
+    },
+    {
+      "name": "Cho dich vu healthy",
+      "command": "docker compose -f compose.yaml -f compose.monitoring.yaml -f compose.logging.yaml up -d --wait db app nginx",
+      "exitCode": 0,
+      "output": " Container cinema11-db-1 Running \n Container cinema11-app-1 Running \n Container cinema11-nginx-1 Running \n Container cinema11-db-1 Waiting \n Container cinema11-db-1 Healthy \n Container cinema11-app-1 Waiting \n Container cinema11-app-1 Healthy \n Container cinema11-db-1 Waiting \n Container cinema11-app-1 Waiting \n Container cinema11-nginx-1 Waiting \n Container cinema11-nginx-1 Healthy \n Container cinema11-db-1 Healthy \n Container cinema11-app-1 Healthy \n"
+    },
+    {
+      "name": "Du lieu sau restart",
+      "command": "C:\\Program Files\\nodejs\\node.exe tests/persistence.cjs",
+      "exitCode": 0,
+      "output": "PASS: seat remains booked after restart; code VE-90D45B431D497985\n"
+    }
+  ],
+  "passed": true
+}

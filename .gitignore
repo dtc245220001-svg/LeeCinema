@@ -1,6 +1,8 @@
 node_modules/
+tmp/
+__pycache__/
+*.pyc
 .env
 logs/
 monitoring/mysql/exporter.cnf
-docs/evidence/*.png
-docs/evidence/*.jpg
+docs/report-student.local.json

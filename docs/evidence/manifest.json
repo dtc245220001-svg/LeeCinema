@@ -1,0 +1,108 @@
+{
+  "time": "2026-10-22T03:46:08.877Z",
+  "screenshots": [
+    {
+      "file": "07-booked-seat.png",
+      "label": "Ghế đã đặt bị vô hiệu hóa trên giao diện",
+      "url": "http://localhost:3003/#movies",
+      "capturedAt": "2026-10-22T03:46:10.839Z"
+    },
+    {
+      "file": "04-seats.png",
+      "label": "Sơ đồ ghế trống, đang chọn, đã đặt và tổng tiền",
+      "url": "http://localhost:3003/#movies",
+      "capturedAt": "2026-10-22T03:46:11.996Z"
+    },
+    {
+      "file": "05-receipt.png",
+      "label": "Mã vé thật tạo trong phiên chụp minh chứng",
+      "url": "http://localhost:3003/#movies",
+      "capturedAt": "2026-10-22T03:46:13.185Z"
+    },
+    {
+      "file": "06-schedule.png",
+      "label": "Ngày và các suất chiếu đang có",
+      "url": "http://localhost:3003/#schedule",
+      "capturedAt": "2026-10-22T03:46:13.358Z"
+    },
+    {
+      "file": "08-stack.png",
+      "label": "Trạng thái Docker Compose của Cinema 11",
+      "url": "http://localhost:3003/#schedule",
+      "capturedAt": "2026-10-22T03:46:13.913Z"
+    },
+    {
+      "file": "09-hardening.png",
+      "label": "Quyền container, mạng và security headers",
+      "url": "http://localhost:3003/#schedule",
+      "capturedAt": "2026-10-22T03:46:14.886Z"
+    },
+    {
+      "file": "10-conflict.png",
+      "label": "Kiểm chứng từ chối đặt trùng ghế",
+      "url": "http://localhost:3003/#schedule",
+      "capturedAt": "2026-10-22T03:46:15.028Z"
+    },
+    {
+      "file": "11-prometheus-targets.png",
+      "label": "Prometheus targets thực tế",
+      "url": "http://localhost:9091/targets",
+      "capturedAt": "2026-10-22T03:46:17.599Z"
+    },
+    {
+      "file": "12-phpmyadmin-bookings.png",
+      "label": "Đơn mới nhất trong phpMyAdmin, không hiển thị tên/email khách",
+      "url": "http://localhost:8082/index.php?route=/sql",
+      "capturedAt": "2026-10-22T03:46:20.881Z"
+    },
+    {
+      "file": "13-phpmyadmin-seats.png",
+      "label": "Chi tiết ghế booking_seats trong phpMyAdmin",
+      "url": "http://localhost:8082/index.php?route=/sql&db=cinema&table=booking_seats&server=1",
+      "capturedAt": "2026-10-22T03:46:22.619Z"
+    },
+    {
+      "file": "14-grafana-web-db.png",
+      "label": "Dashboard Nginx và MySQL có dữ liệu",
+      "url": "http://localhost:3002/d/cinema11/cinema-11-c2b7-he-thong-dat-ve?orgId=1&from=now-15m&to=now&refresh=15s&timezone=Asia%2FHo_Chi_Minh",
+      "capturedAt": "2026-10-22T03:46:30.263Z"
+    },
+    {
+      "file": "15-grafana-containers.png",
+      "label": "Dashboard CPU/RAM container thực tế",
+      "url": "http://localhost:3002/d/cinema11/cinema-11-c2b7-he-thong-dat-ve?orgId=1&from=now-15m&to=now&refresh=15s&timezone=Asia%2FHo_Chi_Minh",
+      "capturedAt": "2026-10-22T03:46:31.517Z"
+    },
+    {
+      "file": "16-grafana-datasources.png",
+      "label": "Datasource Prometheus và Loki được provision",
+      "url": "http://localhost:3002/connections/datasources",
+      "capturedAt": "2026-10-22T03:46:33.047Z"
+    },
+    {
+      "file": "17-logql-app.png",
+      "label": "Grafana Explore LogQL, Last 15 minutes: {project=\"cinema11\",service=\"app\"} | json",
+      "url": "http://localhost:3002/explore?schemaVersion=1&panes=%7B%22v67%22%3A%7B%22datasource%22%3A%22loki%22%2C%22queries%22%3A%5B%7B%22refId%22%3A%22A%22%2C%22expr%22%3A%22%7Bproject%3D%5C%22cinema11%5C%22%2Cservice%3D%5C%22app%5C%22%7D+%7C+json%22%2C%22queryType%22%3A%22range%22%2C%22editorMode%22%3A%22code%22%2C%22datasource%22%3A%7B%22type%22%3A%22loki%22%2C%22uid%22%3A%22loki%22%7D%2C%22direction%22%3A%22backward%22%7D%5D%2C%22range%22%3A%7B%22from%22%3A%22now-15m%22%2C%22to%22%3A%22now%22%7D%7D%7D&orgId=1",
+      "capturedAt": "2026-10-22T03:46:38.967Z"
+    },
+    {
+      "file": "18-logql-errors.png",
+      "label": "Grafana Explore LogQL, Last 15 minutes: {project=\"cinema11\",service=\"app\"} | json | status >= 400",
+      "url": "http://localhost:3002/explore?schemaVersion=1&panes=%7B%22vse%22%3A%7B%22datasource%22%3A%22loki%22%2C%22queries%22%3A%5B%7B%22refId%22%3A%22A%22%2C%22expr%22%3A%22%7Bproject%3D%5C%22cinema11%5C%22%2Cservice%3D%5C%22app%5C%22%7D+%7C+json+%7C+status+%3E%3D+400%22%2C%22queryType%22%3A%22range%22%2C%22editorMode%22%3A%22code%22%2C%22datasource%22%3A%7B%22type%22%3A%22loki%22%2C%22uid%22%3A%22loki%22%7D%2C%22direction%22%3A%22backward%22%7D%5D%2C%22range%22%3A%7B%22from%22%3A%22now-15m%22%2C%22to%22%3A%22now%22%7D%7D%7D&orgId=1",
+      "capturedAt": "2026-10-22T03:46:44.762Z"
+    },
+    {
+      "file": "19-logql-count.png",
+      "label": "Grafana Explore LogQL, Last 15 minutes: sum by (service) (count_over_time({project=\"cinema11\"}[1m]))",
+      "url": "http://localhost:3002/explore?schemaVersion=1&panes=%7B%22fii%22%3A%7B%22datasource%22%3A%22loki%22%2C%22queries%22%3A%5B%7B%22refId%22%3A%22A%22%2C%22expr%22%3A%22sum+by+%28service%29+%28count_over_time%28%7Bproject%3D%5C%22cinema11%5C%22%7D%5B1m%5D%29%29%22%2C%22queryType%22%3A%22range%22%2C%22editorMode%22%3A%22code%22%2C%22datasource%22%3A%7B%22type%22%3A%22loki%22%2C%22uid%22%3A%22loki%22%7D%2C%22direction%22%3A%22backward%22%7D%5D%2C%22range%22%3A%7B%22from%22%3A%22now-15m%22%2C%22to%22%3A%22now%22%7D%7D%7D&orgId=1",
+      "capturedAt": "2026-10-22T03:46:50.555Z"
+    },
+    {
+      "file": "20-git-local.png",
+      "label": "Lịch sử Git cục bộ",
+      "url": "http://localhost:8082/index.php?route=/sql&db=cinema&table=booking_seats&server=1",
+      "capturedAt": "2026-10-22T03:46:50.830Z"
+    }
+  ],
+  "failures": []
+}

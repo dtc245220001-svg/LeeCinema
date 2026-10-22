@@ -21,7 +21,7 @@ Môi trường Windows/PowerShell, Docker Desktop 4.86.0, Linux Engine 29.7.2. N
 | Hardening / dữ liệu thực | USER node, read-only, ALL capabilities dropped, no-new-privileges; db một mạng, không publish; grants giới hạn; UNIQUE và đơn/ghế thực có trong DB |
 | Khởi tạo database rỗng | Container MySQL tạm độc lập: seed UTF-8 đúng, 42 suất, 80 ghế, app có quyền FOR UPDATE; đã dừng container tạm, không ảnh hưởng volume chính |
 
-Ảnh website được tạo bởi tests/browser.cjs từ trang thật trong docs/evidence. Ảnh này bị .gitignore bỏ qua để người dùng chủ động chọn minh chứng khi nộp. Chưa có ảnh phpMyAdmin, dashboard Grafana, Prometheus targets, Git hoặc console; dùng checklist DEMO.md để chụp thêm. File metrics-check.json, logging-check.json, persistence-check.json lưu kết quả có timestamp và dữ liệu không chứa mật khẩu/email.
+Ảnh website được tạo bởi tests/browser.cjs; scripts/capture-evidence.cjs bổ sung ảnh trực tiếp phpMyAdmin, Prometheus, Grafana và ba truy vấn LogQL. Ảnh quyền/mạng/headers và kết quả lệnh là phiếu dữ liệu kiểm chứng thật, không giả ảnh terminal. Manifest ghi thời điểm và nguồn. PNG/JPG evidence không còn bị Git bỏ qua để có thể nộp cùng repository. File metrics-check.json, logging-check.json, persistence-check.json và evidence/test-results.json lưu dữ liệu kiểm tra; không chứa mật khẩu.
 
 ## Các lỗi phát hiện và đã sửa
 
@@ -33,7 +33,11 @@ Môi trường Windows/PowerShell, Docker Desktop 4.86.0, Linux Engine 29.7.2. N
 
 ## Giới hạn kiểm chứng
 
-Chưa kiểm thử tải lớn, mất điện/đĩa hỏng, backup/restore, retention đủ 7 ngày, bảo mật production, thanh toán thật hoặc trình duyệt ngoài Edge. Persistence là kiểm tra restart, không thay cho kiểm tra phục hồi thảm họa. Báo cáo là dàn ý 12 trang, chưa phải bản báo cáo sinh viên hoàn chỉnh. Promtail EOL được công bố, cAdvisor dùng privileged và số liệu từ Linux VM. HTTP localhost chỉ phục vụ demo.
+Cập nhật giao diện: trang chủ/banner, danh sách 12 poster WebP, lọc thể loại, trang lịch chiếu lấy MySQL và chọn sẵn suất, trang giới thiệu, hướng dẫn/FAQ và menu mobile. tests/browser.cjs đã kiểm tra các luồng này ở desktop 1440px/mobile 390px, đặt vé thành công, không lỗi JS/CSP hoặc tràn ngang. Kiểm thử API có thêm GET /api/showtimes. Poster là hình minh họa AI cho phim demo, không phải ảnh minh chứng kết quả hệ thống; screenshot trong evidence được chụp từ website thật.
+
+Cập nhật danh mục ngày 09/10/2026: thêm 9 phim mẫu, tổng 12 phim; thêm 3 phòng, tổng 200 ghế và 105 suất khi khởi tạo mới. Mỗi phim mới có lịch 7 ngày và poster SVG nội bộ. Kiểm thử Edge với 12 phim, kiểm tra vé cũ và khởi tạo database rỗng đều đạt. Các số 3 phim/42 suất/80 ghế ở kết quả ban đầu mô tả mốc trước khi mở rộng danh mục.
+
+Chưa kiểm thử tải lớn, mất điện/đĩa hỏng, backup/restore, retention đủ 7 ngày, bảo mật production, thanh toán thật hoặc trình duyệt ngoài Edge. Persistence là kiểm tra restart, không thay cho phục hồi thảm họa. Báo cáo nội dung và ảnh được xuất riêng sang DOCX/HTML/PDF; thông tin bìa và repository chưa được cung cấp đầy đủ nên đánh dấu chờ bổ sung. Promtail EOL được công bố, cAdvisor dùng privileged và số liệu từ Linux VM. HTTP localhost chỉ phục vụ demo.
 
 ## Ba mốc Git
 

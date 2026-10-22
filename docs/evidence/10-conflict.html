@@ -1,0 +1,69 @@
+<!doctype html><meta charset="utf-8"><style>body{font-family:Segoe UI,sans-serif;margin:40px;background:#f4f7fa;color:#15293b}h1{font-size:26px}h2{font-size:17px}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:white;border:1px solid #cad6df;padding:15px;font-size:13px}p{color:#526575}</style><h1>Kiểm chứng từ chối đặt trùng ghế</h1><p>Phiếu kiểm chứng tự động từ dữ liệu thật; không phải ảnh chụp cửa sổ terminal. Thời điểm: 2026-10-22T03:46:14.886Z</p><h2>Phương thức</h2><pre>POST /api/bookings — yêu cầu ghế đã có trong persistence-check.json</pre><h2>HTTP status</h2><pre>409</pre><h2>Phản hồi API</h2><pre>{
+  &quot;error&quot;: &quot;Ghế vừa được đặt. Vui lòng chọn ghế khác.&quot;
+}</pre><h2>Kết quả kiểm thử thật</h2><pre>{
+  &quot;time&quot;: &quot;2026-10-22T01:38:48.001Z&quot;,
+  &quot;timezone&quot;: &quot;Asia/Saigon&quot;,
+  &quot;cases&quot;: [
+    {
+      &quot;name&quot;: &quot;API / tranh chap ghe&quot;,
+      &quot;command&quot;: &quot;C:\\Program Files\\nodejs\\node.exe tests/integration.cjs&quot;,
+      &quot;exitCode&quot;: 0,
+      &quot;output&quot;: &quot;PASS: health, headers, search, validation, wrong room, booking, server price, duplicate, simultaneous 201/409, atomic rollback.\n&quot;
+    },
+    {
+      &quot;name&quot;: &quot;Trinh duyet desktop mobile&quot;,
+      &quot;command&quot;: &quot;C:\\Program Files\\nodejs\\node.exe tests/browser.cjs&quot;,
+      &quot;exitCode&quot;: 0,
+      &quot;output&quot;: &quot;PASS: 12 WebP posters, home, genres/search, booking receipt, live schedule/preselected session, about/guide, mobile menu and no JS/CSP errors or overflow.\n&quot;
+    },
+    {
+      &quot;name&quot;: &quot;Prometheus exporters&quot;,
+      &quot;command&quot;: &quot;C:\\Program Files\\nodejs\\node.exe tests/monitoring.cjs&quot;,
+      &quot;exitCode&quot;: 0,
+      &quot;output&quot;: &quot;PASS: four targets UP; real MySQL, Nginx and project container CPU/RAM metrics.\n&quot;
+    },
+    {
+      &quot;name&quot;: &quot;Grafana datasources va panels&quot;,
+      &quot;command&quot;: &quot;C:\\Program Files\\nodejs\\node.exe tests/grafana.cjs --loki&quot;,
+      &quot;exitCode&quot;: 0,
+      &quot;output&quot;: &quot;PASS: provisioned Grafana datasource healthy; every metrics panel has real data; Loki datasource healthy.\n&quot;
+    },
+    {
+      &quot;name&quot;: &quot;Loki va LogQL&quot;,
+      &quot;command&quot;: &quot;C:\\Program Files\\nodejs\\node.exe tests/logging.cjs&quot;,
+      &quot;exitCode&quot;: 0,
+      &quot;output&quot;: &quot;PASS: Loki receives application and Nginx logs; error filter and time counts return real data.\n&quot;
+    },
+    {
+      &quot;name&quot;: &quot;Hardening va database&quot;,
+      &quot;command&quot;: &quot;C:\\Program Files\\nodejs\\node.exe tests/hardening.cjs&quot;,
+      &quot;exitCode&quot;: 0,
+      &quot;output&quot;: &quot;PASS: non-root, read-only, cap_drop, no-new-privileges, isolated unpublished MySQL, limited app grants, UNIQUE index and real booking rows.\n&quot;
+    },
+    {
+      &quot;name&quot;: &quot;Khoi tao database rong&quot;,
+      &quot;command&quot;: &quot;C:\\Program Files\\nodejs\\node.exe tests/fresh-init.cjs&quot;,
+      &quot;exitCode&quot;: 0,
+      &quot;output&quot;: &quot;PASS: fresh MySQL initialization, UTF-8 seed, 105 showtimes, 200 seats and application lock permission.\n&quot;
+    },
+    {
+      &quot;name&quot;: &quot;Restart rieng dich vu du an&quot;,
+      &quot;command&quot;: &quot;docker compose -f compose.yaml -f compose.monitoring.yaml -f compose.logging.yaml restart db app nginx&quot;,
+      &quot;exitCode&quot;: 0,
+      &quot;output&quot;: &quot; Container cinema11-nginx-1 Restarting \n Container cinema11-db-1 Restarting \n Container cinema11-app-1 Restarting \n Container cinema11-app-1 Started \n Container cinema11-nginx-1 Started \n Container cinema11-db-1 Started \n&quot;
+    },
+    {
+      &quot;name&quot;: &quot;Cho dich vu healthy&quot;,
+      &quot;command&quot;: &quot;docker compose -f compose.yaml -f compose.monitoring.yaml -f compose.logging.yaml up -d --wait db app nginx&quot;,
+      &quot;exitCode&quot;: 0,
+      &quot;output&quot;: &quot; Container cinema11-db-1 Running \n Container cinema11-app-1 Running \n Container cinema11-nginx-1 Running \n Container cinema11-db-1 Waiting \n Container cinema11-db-1 Healthy \n Container cinema11-app-1 Waiting \n Container cinema11-app-1 Healthy \n Container cinema11-db-1 Waiting \n Container cinema11-app-1 Waiting \n Container cinema11-nginx-1 Waiting \n Container cinema11-nginx-1 Healthy \n Container cinema11-db-1 Healthy \n Container cinema11-app-1 Healthy \n&quot;
+    },
+    {
+      &quot;name&quot;: &quot;Du lieu sau restart&quot;,
+      &quot;command&quot;: &quot;C:\\Program Files\\nodejs\\node.exe tests/persistence.cjs&quot;,
+      &quot;exitCode&quot;: 0,
+      &quot;output&quot;: &quot;PASS: seat remains booked after restart; code VE-90D45B431D497985\n&quot;
+    }
+  ],
+  &quot;passed&quot;: true
+}</pre>

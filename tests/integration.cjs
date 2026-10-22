@@ -6,6 +6,7 @@ async function request(url,body){const r=await fetch(base+url,body?{method:'POST
 const health=await request('/api/health');assert.equal(health.status,200);assert.equal(health.data.database,'connected');assert.equal(health.headers.get('x-content-type-options'),'nosniff');
 const movies=await request('/api/movies');assert.equal(movies.status,200);assert(movies.data.length>=3);
 const empty=await request('/api/movies?q=zzzzzzzz');assert.equal(empty.data.length,0);
+const schedule=await request('/api/showtimes');assert.equal(schedule.status,200);assert(schedule.data.length>0);assert(schedule.data.every(s=>Number.isSafeInteger(s.available)&&s.available>=0&&s.title&&s.room&&s.price>0));
 const shows=(await request(`/api/movies/${movies.data[0].id}/showtimes`)).data;const show=shows[0];assert(show);
 const seats=(await request(`/api/showtimes/${show.id}/seats`)).data.filter(s=>!s.booked);assert(seats.length>=4,'Need at least four free seats');
 const payload={showtimeId:show.id,seatIds:[seats[0].id],name:'Khach Demo',email:'demo@example.test',total:1};
