@@ -4,16 +4,16 @@
 .movie-content > button { background: var(--accent); color: #182013; }
 
 /* Lee Cinema refresh */
-:root{--bg:#0b1220;--card:#121d2e;--line:#263750;--text:#f7f9fc;--muted:#aab8cb;--accent:#f5d36b}
-body{background:radial-gradient(circle at 80% -10%,#1e3550 0,transparent 36%),var(--bg)}
-header{background:#0b1220ed;border-bottom-color:#263750}
-.hero{border:1px solid #314661;box-shadow:0 22px 60px #03081466}
+:root{--bg:#111225;--card:#1b1d35;--line:#373b5d;--text:#fbf9ff;--muted:#b9b7cb;--accent:#f6cf72}
+body{background:radial-gradient(circle at 82% -8%,#39345f 0,transparent 34%),radial-gradient(circle at 8% 30%,#2d2344 0,transparent 28%),var(--bg)}
+header{background:#111225ed;border-bottom-color:#373b5d}
+.hero{border:1px solid #4a4b72;box-shadow:0 22px 60px #05051080}
 .movies{grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}
-.movie{border-radius:14px;border-color:#2b405d;box-shadow:0 12px 30px #0308144d}
+.movie{border-radius:14px;border-color:#3b3d61;box-shadow:0 12px 30px #05051066}
 .movie-visual{aspect-ratio:4/5}
 .movie-content{padding:18px}
 .movie h3{font-size:18px}
 .movie button{border-radius:10px}
-.catalog-controls{padding:16px;border:1px solid #263750;border-radius:14px;background:#101a2a}
+.catalog-controls{padding:16px;border:1px solid #373b5d;border-radius:14px;background:#17192d}
 @media(max-width:1050px){.movies{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:760px){.movies{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.movie-content{padding:13px}.movie h3{font-size:14px}}
