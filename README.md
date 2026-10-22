@@ -1,4 +1,4 @@
-# Cinema 11 — Hệ thống đặt vé xem phim
+# Lee Cinema — Hệ thống đặt vé xem phim
 
 Dự án môn Triển khai và Quản trị Hệ thống Phần mềm. Node.js/Express, HTML/CSS/JS thuần, MySQL và Docker Compose. Thanh toán hoàn toàn giả lập.
 
@@ -88,7 +88,7 @@ node tests/monitoring.cjs
 powershell -ExecutionPolicy Bypass -File scripts/stack.ps1 down
 ```
 
-`stack.ps1` dùng compose.yaml + compose.monitoring.yaml và tự thêm compose.logging.yaml khi file tồn tại. Lệnh compose chỉ với file nền không quản lý đầy đủ dịch vụ giám sát/log; dùng stack.ps1 cho demo cuối cùng. Grafana đăng nhập admin, mật khẩu GRAFANA_PASSWORD trong .env. Dashboard Cinema 11 được provision tự động tại `/d/leecinema`; datasource Prometheus trỏ tới service nội bộ. Prometheus `/targets` phải có bốn targets UP; mysql_up và nginx_up phải là 1. Dashboard hiển thị requests/s, queries/s, connections, CPU và RAM container leecinema từ exporters thực.
+`stack.ps1` dùng compose.yaml + compose.monitoring.yaml và tự thêm compose.logging.yaml khi file tồn tại. Lệnh compose chỉ với file nền không quản lý đầy đủ dịch vụ giám sát/log; dùng stack.ps1 cho demo cuối cùng. Grafana đăng nhập admin, mật khẩu GRAFANA_PASSWORD trong .env. Dashboard Lee Cinema được provision tự động tại `/d/leecinema`; datasource Prometheus trỏ tới service nội bộ. Prometheus `/targets` phải có bốn targets UP; mysql_up và nginx_up phải là 1. Dashboard hiển thị requests/s, queries/s, connections, CPU và RAM container leecinema từ exporters thực.
 
 cAdvisor cần privileged và đọc socket/mount Docker để lấy metadata: đây là ngoại lệ hardening có chủ đích, không publish cổng và không áp dụng cho app. Có thể nhìn thấy metadata container khác ở exporter, nhưng Prometheus lọc lưu chỉ project leecinema. Trên Docker Desktop, số liệu phản ánh container trong Linux VM, không phải toàn bộ Windows host. Docker Engine mới yêu cầu API mới; cAdvisor 0.55.1 được chọn để phù hợp. Nếu thiếu nhãn hoặc không có metrics từng container, kiểm tra logs cAdvisor, quyền đọc socket và mount. Không dùng số liệu root cgroup để giả làm container metrics.
 

@@ -26,7 +26,7 @@ powershell -ExecutionPolicy Bypass -File scripts/stack.ps1 up
 node tests/persistence.cjs
 ```
 
-7. Prometheus /targets: bốn UP. Grafana dashboard Cinema 11: MySQL/Nginx ready, requests, queries, CPU/RAM dịch vụ. Tải lại website để tạo traffic; rate cần ít nhất 2 điểm scrape (~30 giây). `node tests/monitoring.cjs` và `node tests/grafana.cjs --loki`.
+7. Prometheus /targets: bốn UP. Grafana dashboard Lee Cinema: MySQL/Nginx ready, requests, queries, CPU/RAM dịch vụ. Tải lại website để tạo traffic; rate cần ít nhất 2 điểm scrape (~30 giây). `node tests/monitoring.cjs` và `node tests/grafana.cjs --loki`.
 8. Grafana Explore, datasource Loki: xem app, lọc status>=400, count_over_time theo service. `node tests/logging.cjs` tạo HTTP 400 để có log demo. Nhắc Promtail EOL và hướng chuyển Alloy.
 9. Hardening: `docker compose exec -T app id`, MySQL không publish; .env bị ignore; headers trình duyệt; tài khoản app không root.
 10. Dừng `powershell -ExecutionPolicy Bypass -File scripts/stack.ps1 down`, giải thích giữ volume. Không dùng down -v khi cần giữ dữ liệu. Không ảnh hưởng stack khác.

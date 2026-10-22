@@ -1,4 +1,4 @@
-name: cinema11
+name: leecinema
 services:
   db:
     image: mysql:8.4.8
@@ -20,7 +20,7 @@ services:
       retries: 20
     restart: unless-stopped
   app:
-    image: cinema11-app:1.0.0
+    image: leecinema-app:1.0.0
     build: .
     environment:
       PORT: 3001
@@ -72,5 +72,8 @@ networks:
     internal: true
 volumes:
   db_data:
+    name: cinema11_db_data
   app_logs:
+    name: cinema11_app_logs
   nginx_logs:
+    name: cinema11_nginx_logs

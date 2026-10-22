@@ -2,22 +2,22 @@
   "time": "2026-10-22T01:39:11.015Z",
   "results": [
     {
-      "query": "{project=\"cinema11\",service=\"app\"} | json",
+      "query": "{project=\"leecinema\",service=\"app\"} | json",
       "resultType": "streams",
       "streams": 100
     },
     {
-      "query": "{project=\"cinema11\",service=\"nginx\",stream=\"access\"} | json",
+      "query": "{project=\"leecinema\",service=\"nginx\",stream=\"access\"} | json",
       "resultType": "streams",
       "streams": 100
     },
     {
-      "query": "{project=\"cinema11\",service=\"app\"} | json | status >= 400",
+      "query": "{project=\"leecinema\",service=\"app\"} | json | status >= 400",
       "resultType": "streams",
       "streams": 7
     },
     {
-      "query": "sum by (service) (count_over_time({project=\"cinema11\"}[1m]))",
+      "query": "sum by (service) (count_over_time({project=\"leecinema\"}[1m]))",
       "resultType": "matrix",
       "streams": 2
     }

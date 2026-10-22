@@ -10,7 +10,7 @@ scrape_configs:
     static_configs:
       - targets: [localhost]
         labels:
-          project: cinema11
+          project: leecinema
           service: app
           __path__: /logs/app/*.log
     pipeline_stages:
@@ -27,7 +27,7 @@ scrape_configs:
     static_configs:
       - targets: [localhost]
         labels:
-          project: cinema11
+          project: leecinema
           service: nginx
           stream: access
           __path__: /logs/nginx/access.log
@@ -42,7 +42,7 @@ scrape_configs:
     static_configs:
       - targets: [localhost]
         labels:
-          project: cinema11
+          project: leecinema
           service: nginx
           stream: error
           __path__: /logs/nginx/error.log

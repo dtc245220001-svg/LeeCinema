@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 const $ = id => document.getElementById(id);
 const money = n => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(n);
 let shows = [], allMovies = [], selected = new Set(), currentShow = null;
@@ -173,8 +173,8 @@ function route() {
   const visible = current === 'home' ? ['home', 'catalog'] : [current === 'movies' ? 'catalog' : current];
   for (const view of document.querySelectorAll('[data-view]')) view.hidden = !visible.includes(view.dataset.view);
   for (const link of document.querySelectorAll('[data-route]')) { link.classList.toggle('active', link.dataset.route === current); if (link.dataset.route === current) link.setAttribute('aria-current', 'page'); else link.removeAttribute('aria-current'); }
-  const names = { home: 'Trang chủ', movies: 'Phim đang chiếu', schedule: 'Lịch chiếu', about: 'Về Cinema 11', guide: 'Hướng dẫn' };
-  document.title = 'Cinema 11 · ' + names[current];
+  const names = { home: 'Trang chủ', movies: 'Phim đang chiếu', schedule: 'Lịch chiếu', about: 'Về Lee Cinema', guide: 'Hướng dẫn' };
+  document.title = 'Lee Cinema · ' + names[current];
   $('navigation').classList.remove('open'); $('menu-toggle').setAttribute('aria-expanded', 'false');
   if (!busy) { ++showVersion; ++seatVersion; $('booking').hidden = true; $('receipt').hidden = true; }
   if (current === 'schedule') loadSchedule();

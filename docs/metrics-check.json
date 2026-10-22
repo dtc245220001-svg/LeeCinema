@@ -38,7 +38,7 @@
       "value": "1855"
     }
   ],
-  "container_memory_working_set_bytes{container_label_com_docker_compose_project=\"cinema11\"}": [
+  "container_memory_working_set_bytes{container_label_com_docker_compose_project=\"leecinema\"}": [
     {
       "service": "mysql-exporter",
       "value": "8593408"
@@ -88,7 +88,7 @@
       "value": "30285824"
     }
   ],
-  "rate(container_cpu_usage_seconds_total{container_label_com_docker_compose_project=\"cinema11\"}[1m])": [
+  "rate(container_cpu_usage_seconds_total{container_label_com_docker_compose_project=\"leecinema\"}[1m])": [
     {
       "service": "mysql-exporter",
       "value": "0.0019616917626217906"

@@ -36,7 +36,7 @@ async function renderedEvidence(page,file,title,sections){
  const hdr=allowed.map(h=>`${h}: ${rsp.headers.get(h)}`).join('\n');
  const compose=['compose','-f','compose.yaml','-f','compose.monitoring.yaml','-f','compose.logging.yaml'];
  const status=docker([...compose,'ps']);
- await renderedEvidence(page,'08-stack.png','Trạng thái Docker Compose của Cinema 11',[['Lệnh','docker compose -f compose.yaml -f compose.monitoring.yaml -f compose.logging.yaml ps'],['Kết quả thật',status]]);
+ await renderedEvidence(page,'08-stack.png','Trạng thái Docker Compose của Lee Cinema',[['Lệnh','docker compose -f compose.yaml -f compose.monitoring.yaml -f compose.logging.yaml ps'],['Kết quả thật',status]]);
  const inspect=JSON.parse(docker(['inspect',docker(['compose','ps','-q','app'])]))[0];
  const db=JSON.parse(docker(['inspect',docker(['compose','ps','-q','db'])]))[0];
  await renderedEvidence(page,'09-hardening.png','Quyền container, mạng và security headers',[['Ứng dụng',JSON.stringify({user:inspect.Config.User,readOnly:inspect.HostConfig.ReadonlyRootfs,capDrop:inspect.HostConfig.CapDrop,securityOpt:inspect.HostConfig.SecurityOpt,networks:Object.keys(inspect.NetworkSettings.Networks)},null,2)],['MySQL',JSON.stringify({publishedPorts:db.HostConfig.PortBindings,networks:Object.keys(db.NetworkSettings.Networks)},null,2)],['GET /api/health qua Nginx',hdr]]);
@@ -65,7 +65,7 @@ async function renderedEvidence(page,file,title,sections){
  await gp.goto(grafana+'/d/leecinema?orgId=1&from=now-15m&to=now&refresh=15s');await gp.getByText('MySQL sẵn sàng (1 = OK)',{exact:true}).waitFor({timeout:30000});await gp.waitForTimeout(3500);await shot(gp,'14-grafana-web-db.png','Dashboard Nginx và MySQL có dữ liệu');
  await gp.getByText('CPU từng container · leecinema',{exact:true}).scrollIntoViewIfNeeded();await gp.waitForTimeout(1000);await shot(gp,'15-grafana-containers.png','Dashboard CPU/RAM container thực tế');
  await gp.goto(grafana+'/connections/datasources');await gp.getByText('Prometheus',{exact:true}).first().waitFor({timeout:30000});await shot(gp,'16-grafana-datasources.png','Datasource Prometheus và Loki được provision');
- const queries=[['17-logql-app.png','{project="cinema11",service="app"} | json'],['18-logql-errors.png','{project="cinema11",service="app"} | json | status >= 400'],['19-logql-count.png','sum by (service) (count_over_time({project="cinema11"}[1m]))']];
+ const queries=[['17-logql-app.png','{project="leecinema",service="app"} | json'],['18-logql-errors.png','{project="leecinema",service="app"} | json | status >= 400'],['19-logql-count.png','sum by (service) (count_over_time({project="leecinema"}[1m]))']];
  for(const [file,expr] of queries){const panes={a:{datasource:'loki',queries:[{refId:'A',expr,queryType:'range',editorMode:'code',datasource:{type:'loki',uid:'loki'}}],range:{from:'now-15m',to:'now'}}};await gp.goto(grafana+'/explore?schemaVersion=1&panes='+encodeURIComponent(JSON.stringify(panes))+'&orgId=1');await gp.waitForTimeout(5000);await shot(gp,file,'Grafana Explore LogQL, Last 15 minutes: '+expr);}
  }catch(e){manifest.failures.push({service:'Grafana',error:e.message});console.log('Grafana capture failed: '+e.message);console.log('URL: '+gp.url());console.log((await gp.locator('body').innerText()).slice(0,1800));}
  const git=execFileSync('git',['-c','safe.directory=C:/dat-ve-xem-phim','log','--oneline','-5'],{encoding:'utf8'});

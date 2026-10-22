@@ -1,6 +1,6 @@
 # Hình minh họa phim
 
-12 hình được tạo bằng công cụ imagegen tích hợp, dùng cho các phim giả định của dự án Cinema 11. Không tải poster thương mại từ website ngoài, không dùng khuôn mặt người nổi tiếng. Hình gốc được giữ tại nơi công cụ sinh ảnh; bản sử dụng trong website được tối ưu thành WebP 768×1152 tại `public/posters/`.
+12 hình được tạo bằng công cụ imagegen tích hợp, dùng cho các phim giả định của dự án Lee Cinema. Không tải poster thương mại từ website ngoài, không dùng khuôn mặt người nổi tiếng. Hình gốc được giữ tại nơi công cụ sinh ảnh; bản sử dụng trong website được tối ưu thành WebP 768×1152 tại `public/posters/`.
 
 Prompt chung: “Original portrait movie poster artwork for a fictional Vietnamese demo film; premium detailed cinematic key art, compelling vertical composition, full bleed; no text, typography, logos, watermarks, celebrities or existing franchise characters.”
 
