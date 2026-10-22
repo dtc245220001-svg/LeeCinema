@@ -113,9 +113,9 @@ $('booking-form').onsubmit = async event => {
   const form = new FormData(event.target);
   try {
     const result = await api('/api/bookings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ showtimeId: currentShow.id, seatIds: [...selected], name: form.get('name'), email: form.get('email'), phone: form.get('phone') }) });
-    $('receipt-code').textContent = result.code; $('receipt-info').replaceChildren();
+    $('receipt-empty')?.remove(); $('receipt-code').textContent = result.code; $('receipt-info').replaceChildren();
     for (const [key, val] of [['Phim', result.movie], ['Suất chiếu', result.starts_at], ['Phòng', result.room], ['Ghế', result.seats.join(', ')], ['Tổng tiền', money(result.total)]]) $('receipt-info').append(element('dt', key), element('dd', val));
-    $('receipt').hidden = false; $('receipt').scrollIntoView({ behavior: 'smooth' }); $('form-status').textContent = 'Đặt vé thành công.';
+    $('receipt').hidden = false; location.hash = 'receipt'; $('receipt').scrollIntoView({ behavior: 'smooth' }); $('form-status').textContent = 'Đặt vé thành công.';
     await loadSeats(); scheduleShows = [];
   } catch (e) { $('form-status').textContent = e.message; if (e.status === 409) await loadSeats(); }
   finally { busy = false; $('date').disabled = false; $('showtime').disabled = false; updateTotal(); }
@@ -160,15 +160,15 @@ async function loadSchedule() {
   } catch (e) { if (version === scheduleVersion) $('schedule-status').textContent = e.message; }
 }
 function route() {
-  const valid = ['home', 'movies', 'schedule', 'about', 'guide'];
+  const valid = ['home', 'movies', 'schedule', 'receipt', 'guide'];
   const hash = location.hash.slice(1); const current = valid.includes(hash) ? hash : 'home';
   const visible = current === 'home' ? ['home', 'catalog'] : [current === 'movies' ? 'catalog' : current];
   for (const view of document.querySelectorAll('[data-view]')) view.hidden = !visible.includes(view.dataset.view);
   for (const link of document.querySelectorAll('[data-route]')) { link.classList.toggle('active', link.dataset.route === current); if (link.dataset.route === current) link.setAttribute('aria-current', 'page'); else link.removeAttribute('aria-current'); }
-  const names = { home: 'Trang chủ', movies: 'Phim đang chiếu', schedule: 'Lịch chiếu', about: 'Vé của tôi', guide: 'Hướng dẫn' };
+  const names = { home: 'Trang chủ', movies: 'Phim đang chiếu', schedule: 'Lịch chiếu', receipt: 'Vé của tôi', guide: 'Hướng dẫn' };
   document.title = 'Lee Cinema · ' + names[current];
   $('navigation').classList.remove('open'); $('menu-toggle').setAttribute('aria-expanded', 'false');
-  if (!busy) { ++showVersion; ++seatVersion; $('booking').hidden = true; $('receipt').hidden = true; }
+  if (!busy && current !== 'receipt') { ++showVersion; ++seatVersion; $('booking').hidden = true; $('receipt').hidden = true; }
   if (current === 'schedule') loadSchedule();
   window.scrollTo({ top: 0, behavior: 'instant' });
 }
