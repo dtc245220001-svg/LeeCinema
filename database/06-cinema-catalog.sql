@@ -13,3 +13,6 @@ UPDATE movies SET title='Những Mảnh Ghép Cảm Xúc 2',genre='Hoạt hình,
 UPDATE movies SET title='Kẻ Trộm Mặt Trăng 4',genre='Hoạt hình, hài',description='Một phi vụ vui nhộn với những nhân vật tinh quái.' WHERE id=10;
 UPDATE movies SET title='Deadpool & Wolverine',genre='Hành động, hài',description='Cặp đôi bất đắc dĩ tạo nên cuộc phiêu lưu siêu anh hùng hài hước.' WHERE id=11;
 UPDATE movies SET title='Avatar: Dòng Chảy Của Nước',genre='Khoa học viễn tưởng',description='Khám phá đại dương kỳ vĩ trong thế giới ngoài hành tinh.' WHERE id=12;
+UPDATE movies SET poster='/posters/mai.webp' WHERE id=1;
+UPDATE movies SET poster='/posters/nhabaunu.webp' WHERE id=2;
+UPDATE movies SET poster='/posters/latmat7.webp' WHERE id=3;
