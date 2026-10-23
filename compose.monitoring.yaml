@@ -1,10 +1,10 @@
-services:
+﻿services:
   prometheus:
     image: prom/prometheus:v3.2.1
     command: ["--config.file=/etc/prometheus/prometheus.yml", "--storage.tsdb.path=/prometheus", "--storage.tsdb.retention.time=7d"]
     ports: ["127.0.0.1:${PROMETHEUS_PORT:-9091}:9090"]
     volumes:
-      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus_data:/prometheus
     networks: [frontend, monitoring]
     restart: unless-stopped
@@ -23,8 +23,8 @@ services:
     ports: ["127.0.0.1:${GRAFANA_PORT:-3002}:3000"]
     volumes:
       - grafana_data:/var/lib/grafana
-      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
-      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
     networks: [monitoring]
     depends_on: [prometheus]
     restart: unless-stopped
@@ -45,7 +45,7 @@ services:
   mysql-exporter:
     image: prom/mysqld-exporter:v0.17.2
     command: ["--config.my-cnf=/cfg/exporter.cnf"]
-    volumes: ["./monitoring/mysql/exporter.cnf:/cfg/exporter.cnf:ro"]
+    volumes: ["./mysql/exporter.cnf:/cfg/exporter.cnf:ro"]
     networks: [database, frontend]
     depends_on:
       db: {condition: service_healthy}
@@ -69,3 +69,4 @@ networks:
 volumes:
   prometheus_data:
   grafana_data:
+

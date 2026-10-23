@@ -1,0 +1,5 @@
+[client]
+user=exporter
+password=e027837abe24d737b73fad28d3607f247d66d154c0cdf080
+host=db
+port=3306
