@@ -19,3 +19,5 @@ header{background:#111225ed;border-bottom-color:#373b5d}
 @media(max-width:760px){.movies{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.movie-content{padding:13px}.movie h3{font-size:14px}}
 
 .catalog-controls{justify-content:flex-start}.search-label{width:min(420px,100%)}@media(max-width:760px){.catalog-controls{padding:12px}.search-label{width:100%}}
+
+.receipt-qr-wrap{display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin:18px 0}.receipt-qr{width:190px;height:190px;padding:12px;background:#fff;border-radius:14px;image-rendering:pixelated}.qr-hint{color:var(--muted);margin:0 0 8px}.ticket-code{margin:0;color:var(--accent);font-size:20px;font-weight:700;overflow-wrap:anywhere}

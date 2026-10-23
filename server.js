@@ -1,9 +1,10 @@
-require('dotenv').config();
+﻿require('dotenv').config();
 const express = require('express');
 const mysql = require('mysql2/promise');
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
+const QRCode = require('qrcode');
 const app = express();
 const pool = mysql.createPool({host:process.env.DB_HOST || 'db',user:process.env.DB_USER || 'cinema_app',password:process.env.DB_PASSWORD,database:'cinema',connectionLimit:10,timezone:'+07:00',dateStrings:true});
 const logDir=process.env.LOG_DIR || path.join(__dirname,'logs');fs.mkdirSync(logDir,{recursive:true});
@@ -37,7 +38,18 @@ app.post('/api/bookings',async(req,res,next)=>{
  await conn.commit();res.status(201).json({code,movie:show.title,starts_at:show.starts_at,room:show.room,seats:seats.map(s=>s.label),total,payment:'Thanh toán giả lập'});
  }catch(e){if(conn)await conn.rollback();if(e.code==='ER_DUP_ENTRY')return res.status(409).json({error:'Ghế vừa được đặt. Vui lòng chọn ghế khác.'});next(e);}finally{if(conn)conn.release();}
 });
+app.get('/api/qr/:code',async(req,res,next)=>{
+ const code=String(req.params.code||'').toUpperCase();
+ if(!/^VE-[A-Z0-9]{8,32}$/.test(code))return res.status(400).json({error:'M� v� kh�ng h?p l?.'});
+ try{
+  const png=await QRCode.toBuffer(`LEE CINEMA|${code}`,{type:'png',width:320,margin:2,color:{dark:'#111225',light:'#ffffff'}});
+  res.type('png').set('Cache-Control','no-store').send(png);
+ }catch(e){next(e);}
+});
 app.use('/api',(req,res)=>res.status(404).json({error:'Không tìm thấy API.'}));
 app.use((err,req,res,next)=>{if(err.type==='entity.parse.failed')return res.status(400).json({error:'JSON không hợp lệ.'});log({level:'error',service:'app',event:'request_failed',code:err.code||'INTERNAL'});res.status(503).json({error:'Dịch vụ tạm thời không khả dụng. Vui lòng thử lại.'});});
 const server=app.listen(Number(process.env.PORT||3001),'0.0.0.0',()=>log({level:'info',service:'app',event:'started'}));
 process.on('SIGTERM',()=>server.close(async()=>{await pool.end();process.exit(0);}));
+
+
+

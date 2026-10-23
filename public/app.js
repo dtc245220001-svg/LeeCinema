@@ -1,4 +1,4 @@
-'use strict';
+﻿'use strict';
 const $ = id => document.getElementById(id);
 const money = n => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(n);
 let shows = [], allMovies = [], selected = new Set(), currentShow = null;
@@ -113,7 +113,7 @@ $('booking-form').onsubmit = async event => {
   const form = new FormData(event.target);
   try {
     const result = await api('/api/bookings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ showtimeId: currentShow.id, seatIds: [...selected], name: form.get('name'), email: form.get('email'), phone: form.get('phone') }) });
-    $('receipt-empty')?.remove(); $('receipt-code').textContent = result.code; $('receipt-info').replaceChildren();
+    $('receipt-empty')?.remove(); $('receipt-code').textContent = 'M�: ' + result.code; $('receipt-qr').src = '/api/qr/' + encodeURIComponent(result.code); $('receipt-qr').hidden = false; $('receipt-info').replaceChildren();
     for (const [key, val] of [['Phim', result.movie], ['Suất chiếu', result.starts_at], ['Phòng', result.room], ['Ghế', result.seats.join(', ')], ['Tổng tiền', money(result.total)]]) $('receipt-info').append(element('dt', key), element('dd', val));
     $('receipt').hidden = false; location.hash = 'receipt'; $('receipt').scrollIntoView({ behavior: 'smooth' }); $('form-status').textContent = 'Đặt vé thành công.';
     await loadSeats(); scheduleShows = [];
@@ -177,3 +177,6 @@ $('date').onchange = () => changeDate(); $('showtime').onchange = loadSeats;
 $('close-booking').onclick = () => { if (busy) return; ++showVersion; ++seatVersion; $('booking').hidden = true; };
 let timer; $('search').oninput = () => { clearTimeout(timer); timer = setTimeout(loadMovies, 250); };
 window.addEventListener('hashchange', route); route(); loadMovies();
+
+
+
