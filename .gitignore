@@ -6,3 +6,6 @@ __pycache__/
 logs/
 monitoring/mysql/exporter.cnf
 docs/report-student.local.json
+
+# Local temporary assets
+tmp/
